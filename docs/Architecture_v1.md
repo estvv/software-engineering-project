@@ -4,7 +4,7 @@
 **Product:** SeatTogether
 **Members:** Esteve BASCUNANA (12264733), Adam LARKEM (12264692)
 **Date:** 2026-09-29
-**Writer:** TODO (team) **Reviewer:** TODO (team)
+**Writer:** Esteve BASCUNANA **Reviewer:** Adam LARKEM (on the pull request)
 **Status:** Draft for M3. Planned structure only. No code has been written or run.
 
 ---
@@ -128,10 +128,11 @@ Interaction chosen for later interface/API work: **C1 Map UI → C2 Seat Status 
 - [ ] Assumptions and planned checks are distinct from actual evidence.
 
 **Reviewer; ambiguity found; change made (or reason no change was needed)**
-TODO (team): the reviewer explains both paths, challenges D1, and records one ambiguity and the fix.
+Reviewer: Adam LARKEM, on the pull request for branch `docs/architecture-v1`. The reviewer explains both criterion paths, challenges D1, and records one ambiguity and the fix.
+Ambiguity found and change made: TODO (Adam, from the PR review).
 
 **Saved file/location; person who reopened and checked it**
-TODO (team).
+Saved in the team repository as `docs/Architecture_v1.md` (branch `docs/architecture-v1`, merged through a pull request). Reopened and checked by: TODO (Adam, after merge).
 
 **AI use**
 Used. See AI_USAGE.md, entry 3 (2026-09-29).
