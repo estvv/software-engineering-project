@@ -15,7 +15,7 @@
 ### Target user, situation, and current problem
 
 - **[OBSERVED]** As Inha University students ourselves, we have personally experienced the cafeteria becoming crowded during lunch peak hours, with occupied tables scattered across the room and no way to see from a distance which tables are free.
-- **[OBSERVED]** This problem of finding a free seat and meeting people at lunch was one of three pitches proposed and discussed during the Week 1 class session. Other students recognized the situation, so it is not only our personal impression; this does not yet show how many students are affected.
+- **[OBSERVED]** This problem of finding a free seat and meeting people at lunch was one of three pitches proposed and discussed during the Week 2 class session. Other students recognized the situation, so it is not only our personal impression; this does not yet show how many students are affected.
 - **[ASSUMED]** We assume this problem is frequent and shared by a meaningful share of students (not an isolated inconvenience), and that some students who eat alone would be open to company if it were easy and low-pressure to arrange. Neither has been confirmed through direct observation of other students yet — this is the assumption we plan to test (see Worksheet 2).
 
 ### Current workaround or alternative; observations and their source
@@ -80,7 +80,7 @@ A clickable mockup (Figma, or a paper prototype photographed and clicked through
 
 The facilitator records, per participant: check-in completed without help (yes/no), hesitation or questions, spontaneous toggle activation (yes/no), and comments about tray/phone friction.
 
-**Observation that would support the assumption** (thresholds agreed before the test)
+**Observation that would support the assumption** (proposed thresholds, to be agreed by the team before the test)
 - At least 7 of 10 participants complete the check-in without help.
 - At least 3 of 10 participants activate "open to company" spontaneously, not only after being asked.
 
@@ -97,15 +97,15 @@ A test with 8–10 students can inform a decision; it does not establish general
 
 **Tool and date:** Claude (Anthropic), 2026-09-18
 
-**Actual prompt:**
+**Prompt (reconstructed):**
 
 > You are a critical product coach. Context: [WHAT / WHO / WHY table and product vision statement above, pasted as written]. Restate the proposed user, problem, and value. Identify stated and inferred assumptions, ambiguities, and alternative ways users solve the problem. Suggest evidence for our riskiest assumption. Do not invent user research, observations, or test results. Do not rewrite the vision yet.
 
-<!-- TODO (team): if the text pasted into the prompt differed from the table above, paste the exact text instead. -->
+The instruction text is the one supplied in the M1 worksheet. The conversation was not preserved, so the exact context pasted into the prompt cannot be shown; it was our What / Who / Why and vision statement as drafted on 2026-09-18.
 
 **Output reference or excerpt:**
 
-> TODO (team): paste a short excerpt of Claude's actual answer, or a link to the conversation (claude.ai share link). Do not rewrite it from memory.
+Not preserved. The team did not save the conversation or a link to it, and we do not reconstruct the output from memory. The suggestions the team responded to are listed in the decisions table below. For later milestones, every AI interaction is logged with a link or excerpt in [AI_USAGE.md](AI_USAGE.md).
 
 ### Team decisions
 
@@ -124,12 +124,12 @@ A test with 8–10 students can inform a decision; it does not establish general
 - [x] Scope identifies a main task and excludes at least one feature.
 - [x] At least three assumptions are clearly separated from observations.
 - [x] One risky assumption has a prototype and verification plan.
-- [ ] The actual critique and reasoned team decisions are recorded. *(output excerpt still missing, see above)*
+- [ ] The actual critique and reasoned team decisions are recorded. *(team decisions recorded; the AI output itself was not preserved, see above)*
 - [x] Every member can explain the final vision and its remaining uncertainty.
 
 ### Sign-off
 
-| Member | Date |
-|---|---|
-| Esteve BASCUNANA | 2026-09-18 |
-| Adam LARKEM | 2026-09-18 |
+| Member | First sign-off | Sign-off after the 2026-09-29 revision |
+|---|---|---|
+| Esteve BASCUNANA | 2026-09-18 | 2026-09-29 |
+| Adam LARKEM | 2026-09-18 | TODO (Adam, on the PR review) |
