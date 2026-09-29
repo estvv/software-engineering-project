@@ -94,10 +94,11 @@ The "open to company" status and community status reporting are excluded from th
 - [ ] The document describes expected behavior without inventing test results.
 
 **Reviewer; ambiguity found; change made (or reason no change was needed)**
-TODO (team): reviewer name; ambiguity found; change made or reason no change was needed.
+Writer: Esteve BASCUNANA. Reviewer: Adam LARKEM, on the pull request for branch `docs/m2-requirements`.
+Ambiguity found and change made: TODO (Adam, from the PR review).
 
 **Saved file/location or commit link; person who reopened and checked it**
-TODO (team): file location or commit link; name of the member who reopened it.
+Saved in the team repository as `docs/M2_story_slice.md` (branch `docs/m2-requirements`, merged through a pull request). Reopened and checked by: TODO (Adam, after merge).
 
 **AI use**
 Used. See AI_USAGE.md, entry 2 (2026-09-29): Claude drafted this document from our M1 worksheet and the Week 4 lab guide. The team's checks and changes are recorded there.
