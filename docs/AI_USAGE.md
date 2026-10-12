@@ -10,7 +10,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Tool:** Claude (Anthropic)
 - **Milestone:** M1 — Product Vision
 - **Purpose:** Critique of our What / Who / Why and product vision, using the prompt supplied in the M1 worksheet.
-- **Prompt:** The M1 "critical product coach" prompt, with our What / Who / Why and vision statement pasted in. Full text in M1, Worksheet 3.
+- **Prompt:** The M1 "critical product coach" prompt, with our What / Who / Why and vision statement pasted in. Instruction text reconstructed in M1, Worksheet 3; the exact pasted context was not preserved.
 - **Output:** Not preserved (no saved conversation or link). The team does not reconstruct it from memory; see M1, Worksheet 3.
 - **Team decisions:** Recorded point by point (accept / modify / reject, reason, verification action) in M1, Worksheet 3.
 - **Checks by the team:** Each suggestion was discussed. The accepted points (tray/phone friction, behavioral signal instead of stated intention) were integrated into the verification plan on 2026-09-29 (see entry 4).
@@ -61,3 +61,22 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **What the AI did not do:** It did not write the M1 AI output excerpt, reviews, or team checks, and did not invent test results.
 - **Checks by the team:** Esteve reviewed the list of corrections and decided: the pitch took place in Week 2 (not Week 1); the lost M1 AI output is recorded as not preserved rather than reconstructed; the success thresholds, backlog order and Definition of Done stay proposals until Adam reviews them.
 - **Changes made by the team:** These decisions were applied by Claude on Esteve's instruction (2026-09-29): Week 2 in M1, "not preserved" output note, Esteve's re-sign-off, writer/reviewer names in M2 and Architecture v1. Adam's review: TODO (Adam, on the PRs).
+
+---
+
+## Entry 5 — Applying Adam's PR review comments
+
+- **Date:** 2026-10-12
+- **Tool:** Claude (Anthropic), Claude Code
+- **Milestone:** M1, M2, M3 preparation
+- **Purpose:** Apply the review comments Adam left on PRs #1–#4.
+- **Input given to the AI:** Adam's four review comments and all files in this repository.
+- **Output / changes made by the AI:**
+  - M2: S2 dependency reworded (S2 needs the S1 map screen; its status logic does not depend on S1); missing final newline added.
+  - M1: success thresholds expressed as percentages rounded up, so they apply to 8–10 participants; next meeting updated to Tue 2026-10-13.
+  - Architecture v1: status-change latency added to the unknowns in section 1; Sommerville reference year corrected to 2020; missing final newline added.
+  - This file: entry 1 no longer claims the full prompt text is in M1.
+  - README: Git_practice_log.md added to the documents table.
+- **What the AI did not do:** It did not fill Adam's review, sign-off or "reopened and checked by" fields.
+- **Checks by the team:** Esteve asked for the fixes and reviewed the diff. Adam: TODO (on the PR).
+- **Changes made by the team:** TODO (Adam, on the PR).

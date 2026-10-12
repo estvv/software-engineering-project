@@ -17,3 +17,4 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 | [BACKLOG.md](docs/BACKLOG.md) | M2 | Ordered Product Backlog and draft Definition of Done |
 | [Architecture_v1.md](docs/Architecture_v1.md) | M3 prep (Week 5) | Component structure, criterion paths, decision D1 |
 | [AI_USAGE.md](docs/AI_USAGE.md) | All | Log of AI tool use and team checks |
+| [Git_practice_log.md](docs/Git_practice_log.md) | Self-study | Personal Git and GitHub practice record (not assessed) |

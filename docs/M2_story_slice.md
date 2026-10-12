@@ -68,7 +68,7 @@ then T1 is displayed as free on the map.
 
 **Priority and rationale; dependency**
 Priority 2. It provides the data that S1 displays, but from the user's point of view it happens after finding a table.
-Dependency: S2's own behavior does not depend on S1.
+Dependency: S2 selects the table on the map displayed by S1, so S2 needs the S1 map screen. S2's status logic does not depend on S1.
 
 ---
 

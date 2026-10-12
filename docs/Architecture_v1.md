@@ -26,7 +26,7 @@
 | S1-AC2 | Given every table is marked occupied, when the student opens the map, then the message "No free table reported right now" is shown above the map. |
 | S2 | As a student who has just sat down, I want to mark my table occupied and free it when I leave. (Source of the statuses; not traced in detail here.) |
 
-**Unknowns:** how long a check-in stays valid; whether a table is tracked as a whole or seat by seat (open questions from M2).
+**Unknowns:** how long a check-in stays valid; whether a table is tracked as a whole or seat by seat; how quickly a status change must appear for other users, which affects C2 and C4 (open questions from M2).
 
 ---
 
@@ -102,7 +102,7 @@ These are planned paths, not evidence that any code has run.
 **Option A:** Keep the rule in a separate Seat Status Service (C2). The UI only asks for statuses and displays them.
 **Option B:** The UI reads the Status Store directly and applies the rule itself.
 
-**Chosen option and reason:** Option A. The quality attribute that matters here is **maintainability**: our status rules are not decided yet and will change. With Option A, those changes are made in one place (C2), and the UI does not need to change as long as the interface between C1 and C2 stays the same. This follows the "implement once" and "stable interfaces" decomposition guidelines from the Week 5 lecture (Sommerville 2021, Ch. 4).
+**Chosen option and reason:** Option A. The quality attribute that matters here is **maintainability**: our status rules are not decided yet and will change. With Option A, those changes are made in one place (C2), and the UI does not need to change as long as the interface between C1 and C2 stays the same. This follows the "implement once" and "stable interfaces" decomposition guidelines from the Week 5 lecture (Sommerville 2020, Ch. 4).
 
 **Trade-off**
 - *Benefit:* rule changes are localized in C2; the same rule can later be reused by the excluded features (community reporting, "open to company").

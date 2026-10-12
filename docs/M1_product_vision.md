@@ -6,7 +6,7 @@
 **Members:** Esteve BASCUNANA (12264733), Adam LARKEM (12264692)
 **Communication:** Discord
 **Meetings:** libraries / study lounges / classes
-**Next meeting:** Tue 2026-09-22, during ISE4133 class, 9–12h, room M-224
+**Next meeting:** Tue 2026-10-13, during ISE4133 class, 9–12h, room M-224
 
 ---
 
@@ -81,8 +81,8 @@ A clickable mockup (Figma, or a paper prototype photographed and clicked through
 The facilitator records, per participant: check-in completed without help (yes/no), hesitation or questions, spontaneous toggle activation (yes/no), and comments about tray/phone friction.
 
 **Observation that would support the assumption** (proposed thresholds, to be agreed by the team before the test)
-- At least 7 of 10 participants complete the check-in without help.
-- At least 3 of 10 participants activate "open to company" spontaneously, not only after being asked.
+- At least 70% of participants, rounded up (7 of 10, 7 of 9, 6 of 8), complete the check-in without help.
+- At least 30% of participants, rounded up (3 of 10, 3 of 9, 3 of 8), activate "open to company" spontaneously, not only after being asked.
 
 **Observation that would make us revise the vision**
 Fewer participants than the thresholds above, or most participants saying they would skip check-in as "too much effort for no clear benefit", that the tray makes using the phone impractical, or that they would never make themselves publicly visible as "alone". If this dominates, the team would revise toward a more passive/automatic check-in mechanism and/or a softer, less public version of the social feature (e.g. visible only to a chosen circle rather than to all cafeteria users).
