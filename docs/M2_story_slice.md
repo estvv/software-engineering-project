@@ -95,10 +95,10 @@ The "open to company" status and community status reporting are excluded from th
 
 **Reviewer; ambiguity found; change made (or reason no change was needed)**
 Writer: Esteve BASCUNANA. Reviewer: Adam LARKEM, on the pull request for branch `docs/m2-requirements`.
-Ambiguity found and change made: TODO (Adam, from the PR review).
+Ambiguity found and change made: "S2's own behavior does not depend on S1" contradicted S2-AC1 and S2-AC2, which end on the S1 map. Reworded: S2 needs the S1 map screen, but its status logic does not depend on S1. Missing final newline also fixed.
 
 **Saved file/location or commit link; person who reopened and checked it**
-Saved in the team repository as `docs/M2_story_slice.md` (branch `docs/m2-requirements`, merged through a pull request). Reopened and checked by: TODO (Adam, after merge).
+Saved in the team repository as `docs/M2_story_slice.md` (branch `docs/m2-requirements`, merged through a pull request). Reopened and checked by: Adam LARKEM, 2026-10-12.
 
 **AI use**
 Used. See AI_USAGE.md, entry 2 (2026-09-29): Claude drafted this document from our M1 worksheet and the Week 4 lab guide. The team's checks and changes are recorded there.

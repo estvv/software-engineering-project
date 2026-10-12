@@ -129,10 +129,10 @@ Interaction chosen for later interface/API work: **C1 Map UI → C2 Seat Status 
 
 **Reviewer; ambiguity found; change made (or reason no change was needed)**
 Reviewer: Adam LARKEM, on the pull request for branch `docs/architecture-v1`. The reviewer explains both criterion paths, challenges D1, and records one ambiguity and the fix.
-Ambiguity found and change made: TODO (Adam, from the PR review).
+Ambiguity found and change made: the unknowns in section 1 left out the M2 open question "how quickly must a status change appear for other users", which affects C2 and C4. Added. Also corrected the Sommerville reference year (2020) and the missing final newline. Both criterion paths (S1-AC1, S1-AC2) trace through C1 → C2 → C3/C4 to a visible result, arrows are labeled, and D1 compares two options with a real cost.
 
 **Saved file/location; person who reopened and checked it**
-Saved in the team repository as `docs/Architecture_v1.md` (branch `docs/architecture-v1`, merged through a pull request). Reopened and checked by: TODO (Adam, after merge).
+Saved in the team repository as `docs/Architecture_v1.md` (branch `docs/architecture-v1`, merged through a pull request). Reopened and checked by: Adam LARKEM, 2026-10-12.
 
 **AI use**
 Used. See AI_USAGE.md, entry 3 (2026-09-29).

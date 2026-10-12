@@ -80,7 +80,7 @@ A clickable mockup (Figma, or a paper prototype photographed and clicked through
 
 The facilitator records, per participant: check-in completed without help (yes/no), hesitation or questions, spontaneous toggle activation (yes/no), and comments about tray/phone friction.
 
-**Observation that would support the assumption** (proposed thresholds, to be agreed by the team before the test)
+**Observation that would support the assumption** (thresholds agreed by the team on 2026-10-12)
 - At least 70% of participants, rounded up (7 of 10, 7 of 9, 6 of 8), complete the check-in without help.
 - At least 30% of participants, rounded up (3 of 10, 3 of 9, 3 of 8), activate "open to company" spontaneously, not only after being asked.
 
@@ -132,4 +132,4 @@ Not preserved. The team did not save the conversation or a link to it, and we do
 | Member | First sign-off | Sign-off after the 2026-09-29 revision |
 |---|---|---|
 | Esteve BASCUNANA | 2026-09-18 | 2026-09-29 |
-| Adam LARKEM | 2026-09-18 | TODO (Adam, on the PR review) |
+| Adam LARKEM | 2026-09-18 | 2026-10-12 |

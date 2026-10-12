@@ -23,7 +23,7 @@ Order considers value, risk, and dependencies. Near-term items are detailed; lat
 
 ## Definition of Done (draft)
 
-Proposed by Esteve BASCUNANA; pending agreement by Adam LARKEM in the pull-request review. The backlog order above is pending the same review.
+Proposed by Esteve BASCUNANA; agreed as a draft by Adam LARKEM in the pull-request review (2026-10-12), together with the backlog order above.
 
 A backlog item is done when:
 

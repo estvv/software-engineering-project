@@ -26,8 +26,8 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Input given to the AI:** Our M1 submission, the Week 4 lecture slides, and the Week 4 lab guide.
 - **Output:** A first draft of M2_story_slice.md (context, proto-persona, scenario, stories S1 and S2, acceptance criteria, open rule, excluded capability).
 - **What the AI did not do:** It did not produce user feedback, observations, or test results. The teammate review and the save/reopen check were left for the team to do.
-- **Checks by the team:** TODO (Esteve + Adam, during the PR review): what you verified (e.g. stories match M1, criteria are understandable without help, assumptions correctly labeled).
-- **Changes made by the team:** TODO (Esteve + Adam, during the PR review): what you changed in the draft, or "none, because ...".
+- **Checks by the team:** Adam reviewed M2_story_slice.md and BACKLOG.md on the PR: S1 before S2 makes sense since statuses are simulated in the prototype; backlog order and Definition of Done accepted as a draft. He found that the S2 dependency statement contradicted S2's acceptance criteria.
+- **Changes made by the team:** S2 dependency reworded (S2 needs the S1 map screen; its status logic does not depend on S1); missing final newline added (see entry 5).
 
 ---
 
@@ -40,8 +40,8 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Input given to the AI:** M2_story_slice.md, the Week 5 lecture slides, and the Week 5 worksheet.
 - **Output:** A first draft of Architecture_v1.md (4 components, criterion paths for S1-AC1 and S1-AC2, decision D1, Week 6 handoff).
 - **What the AI did not do:** No code, no test results. The peer review, writer/reviewer names, and save check were left for the team.
-- **Checks by the team:** TODO (Esteve + Adam, during the PR review).
-- **Changes made by the team:** TODO (Esteve + Adam, during the PR review).
+- **Checks by the team:** Adam reviewed Architecture_v1.md on the PR: both criterion paths (S1-AC1, S1-AC2) trace through C1 → C2 → C3/C4 to a visible result, arrows are labeled, and D1 compares two options with a real cost. He checked the Sommerville reference year and found a missing unknown.
+- **Changes made by the team:** Status-change latency added to the unknowns; Sommerville year corrected to 2020; missing final newline added (see entry 5).
 
 ---
 
@@ -60,7 +60,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
   - This file: entry 1 corrected (it claimed the output was reproduced in M1 and that the plan was already updated; neither was true).
 - **What the AI did not do:** It did not write the M1 AI output excerpt, reviews, or team checks, and did not invent test results.
 - **Checks by the team:** Esteve reviewed the list of corrections and decided: the pitch took place in Week 2 (not Week 1); the lost M1 AI output is recorded as not preserved rather than reconstructed; the success thresholds, backlog order and Definition of Done stay proposals until Adam reviews them.
-- **Changes made by the team:** These decisions were applied by Claude on Esteve's instruction (2026-09-29): Week 2 in M1, "not preserved" output note, Esteve's re-sign-off, writer/reviewer names in M2 and Architecture v1. Adam's review: TODO (Adam, on the PRs).
+- **Changes made by the team:** These decisions were applied by Claude on Esteve's instruction (2026-09-29): Week 2 in M1, "not preserved" output note, Esteve's re-sign-off, writer/reviewer names in M2 and Architecture v1. Adam's review (2026-10-12): success thresholds changed to percentages so they apply to 8–10 participants; backlog order and Definition of Done agreed as a draft; entry 1 wording corrected (see entry 5).
 
 ---
 
@@ -77,6 +77,6 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
   - Architecture v1: status-change latency added to the unknowns in section 1; Sommerville reference year corrected to 2020; missing final newline added.
   - This file: entry 1 no longer claims the full prompt text is in M1.
   - README: Git_practice_log.md added to the documents table.
-- **What the AI did not do:** It did not fill Adam's review, sign-off or "reopened and checked by" fields.
-- **Checks by the team:** Esteve asked for the fixes and reviewed the diff. Adam: TODO (on the PR).
-- **Changes made by the team:** TODO (Adam, on the PR).
+- **What the AI did not do:** It did not decide any change; every change comes from Adam's review comments.
+- **Checks by the team:** Esteve asked for the fixes and reviewed the diff. Adam wrote the review comments and wanted these changes.
+- **Changes made by the team:** The review points came from Adam; the wording follows his suggestions. His review, sign-off and "reopened and checked by" fields were filled on 2026-10-12.
