@@ -16,5 +16,6 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 | [M2_story_slice.md](docs/M2_story_slice.md) | M2 (Week 4) | Proto-persona, scenario, stories S1–S2 with acceptance criteria |
 | [BACKLOG.md](docs/BACKLOG.md) | M2 | Ordered Product Backlog and draft Definition of Done |
 | [Architecture_v1.md](docs/Architecture_v1.md) | M3 prep (Week 5) | Component structure, criterion paths, decision D1 |
+| [MIDTERM_PLAN.md](docs/MIDTERM_PLAN.md) | Midterm (Week 8) | Step-by-step plan, owners and decisions for the midterm report |
 | [AI_USAGE.md](docs/AI_USAGE.md) | All | Log of AI tool use and team checks |
 | [Git_practice_log.md](docs/Git_practice_log.md) | Self-study | Personal Git and GitHub practice record (not assessed) |
