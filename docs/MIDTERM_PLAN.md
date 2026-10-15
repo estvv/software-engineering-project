@@ -39,7 +39,7 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 - [x] Choose the stack (Next.js)
 - [x] Decide R1 and R2 (recorded in [BACKLOG.md](BACKLOG.md))
 - [ ] Adam reviews these decisions on the PR
-- [ ] Create one GitHub issue per step below, each with an owner
+- [x] Create one GitHub issue per step below, each with an owner (issues #9–#24, milestone "Midterm")
 - [ ] Commit the `.gitignore`
 
 ### Step 1 — Inputs for the code (Fri 10-16 – Sat 10-17)
