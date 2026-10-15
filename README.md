@@ -6,7 +6,7 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Midterm work in progress. Backend for S1 (`GET /api/tables`) implemented and tested; map UI (C1) and check-in/check-out (S2) not started. Table statuses are kept in memory and the table layout is a temporary placeholder.
+**Status:** Midterm work in progress. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) not started. Table statuses are kept in memory and the table layout is a temporary placeholder.
 
 ## Run
 
@@ -24,7 +24,7 @@ Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 | Component | Files |
 |---|---|
 | C1 Map UI | `app/page.tsx` (placeholder) |
-| C2 Seat Status Service | `lib/seatStatus.ts`, route handlers in `app/api/` |
+| C2 Seat Status Service | `lib/seatStatus.ts`, route handlers in `app/api/`, errors in `lib/apiErrors.ts` |
 | C3 Table Layout | `data/layout.json`, `lib/layout.ts` |
 | C4 Status Store | `lib/statusStore.ts` (in memory) |
 

@@ -123,3 +123,17 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-10-15):** `npm test` 7/7 passed; `tsc --noEmit`, `npm run lint` and `npm run build` succeeded; `next start` served `GET /api/tables` with `200`, `Cache-Control: no-store`, and 12 free tables.
 - **What the AI did not do:** C1 Map UI (Adam), S2 endpoints (Step 3). No screenshots yet.
 - **Checks by the team:** _To fill: Esteve runs `npm test` and the app; Adam reviews the PR._
+
+---
+
+## Entry 9 — S2 check-in / check-out and token check
+
+- **Date:** 2026-10-15
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm, Step 3 (S2 backend and security check)
+- **Purpose:** Implement `POST /api/tables/{id}/checkin` and `/checkout` from API_contract.md, with rules R1, R2 and the check-out token.
+- **Input given to the AI:** API_contract.md, the code from entry 8, BACKLOG.md (R1, R2).
+- **Output:** `checkIn` / `checkOut` / `tableExists` in `lib/seatStatus.ts` (C2), `lib/apiErrors.ts`, the two route handlers, response types in `lib/types.ts`, 21 new tests (28 in total), [manual API check](evidence/2026-10-15_api_manual_check.md).
+- **Checks run by the AI (2026-10-15):** `npm test` 28/28 passed; `tsc --noEmit`, `npm run lint`, `npm run build` succeeded; manual `curl` check on `next start`: all six results match the contract (see the evidence file).
+- **What the AI did not do:** No UI for the buttons (Adam), no security section text (Adam). The checks were not repeated by a team member yet.
+- **Checks by the team:** _To fill: Esteve re-runs `npm test` and the manual check; Adam reviews the PR._
