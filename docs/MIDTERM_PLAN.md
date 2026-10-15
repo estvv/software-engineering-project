@@ -7,8 +7,8 @@
 The midterm is a progress report: a team PDF (5–7 body pages) and one individual PDF (0.5–1 page) per student. The largest team criterion is "Prototype and verification evidence" (20 pts). It needs a working core feature or an executed technical check, which we do not have yet. This plan gets us there.
 
 **Split:** each member owns a part of the work, so that each can explain their own work and one decision in the individual report.
-- **Esteve:** API contract, backend (C2 Seat Status Service, C4 Status Store), automated tests, report sections 1–4, PDF assembly and submission.
-- **Adam:** cafeteria layout (P2, C3 Table Layout), frontend (C1 Map UI), S2 buttons, report sections 6–7.
+- **Esteve:** cafeteria layout (P2, C3 Table Layout), API contract, backend (C2 Seat Status Service, C4 Status Store), automated tests, report sections 1–4, PDF assembly and submission.
+- **Adam:** frontend (C1 Map UI), S2 buttons, report sections 6–7.
 
 **Every step:** a branch, a PR, a review by the other member, a merge. AI use goes into [AI_USAGE.md](AI_USAGE.md).
 
@@ -43,8 +43,8 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 - [ ] Commit the `.gitignore`
 
 ### Step 1 — Inputs for the code (Fri 10-16 – Sat 10-17)
-- [ ] **Adam:** sketch and photograph the cafeteria (P2), then write `data/layout.json` (table IDs and positions) — C3
-- [ ] **Esteve:** write `docs/API_contract.md` (Week 6): `GET /api/tables`, `POST /api/tables/{id}/checkin`, `POST /api/tables/{id}/checkout`, with input, result and errors (400, 404, 409). Adam reviews.
+- [ ] **Esteve:** sketch and photograph the cafeteria (P2), then write `data/layout.json` (table IDs and grid row/column) — C3
+- [ ] **Esteve:** write `docs/API_contract.md` (Week 6): `GET /api/tables`, `POST /api/tables/{id}/checkin`, `POST /api/tables/{id}/checkout`, with input, result and errors (400, 403, 404, 409). Adam reviews.
 
 ### Step 2 — Implement S1 (Sun 10-18 – Tue 10-20)
 - [ ] **Esteve:** Next.js project setup, C2 + C4, `GET /api/tables`, unit tests for S1-AC1 (T1 free, T2 occupied) and S1-AC2 (all occupied → "no free table")
