@@ -11,4 +11,13 @@ Run by Claude Code on Esteve's machine, branch `feat/s2-checkin-checkout`, with 
 | 5 | `POST /api/tables/T1/checkout` with the token from step 1 | 200, T1 free (S2-AC2) | `{"table":{"id":"T1","row":0,"col":0,"status":"free"}}` [200] |
 | 6 | `POST /api/tables/T99/checkin` | 404 TABLE_NOT_FOUND | `{"error":{"code":"TABLE_NOT_FOUND","message":"This table does not exist."}}` [404] |
 
-All six results match the contract. To be re-run by a team member before the report.
+All six results match the contract. To be re-run by a team member before the report: `bash scripts/api_check.sh`.
+
+## Re-run by a team member
+
+Re-run by Esteve BASCUNANA on 2026-10-15 at 19:00 KST, commit `d786cca`, on his machine:
+
+| Check | Expected | Actual | Screenshot |
+|---|---|---|---|
+| `npm test` | 28 tests pass | 3 files, 28 passed (28) | [2026-10-15_esteve_npm_test.png](2026-10-15_esteve_npm_test.png) |
+| `bash scripts/api_check.sh` | 6/6 as in the table above | 6/6 checks passed, same status codes and messages | [2026-10-15_esteve_api_check.png](2026-10-15_esteve_api_check.png) |

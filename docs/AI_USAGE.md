@@ -107,7 +107,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** A first draft of API_contract.md (3 operations, JSON representations, error codes, traceability, known limits) and a 3 × 4 placeholder layout (T1–T12).
 - **Team decisions taken before drafting:** Esteve chose: `noFreeTable` flag decided by C2; check-out token in the contract from v1; grid row/column positions; a placeholder layout until the cafeteria sketch is done.
 - **What the AI did not do:** No code, no test run. The layout is not the real cafeteria and is labeled as temporary.
-- **Checks by the team:** _To fill: Esteve's read-through and Adam's review on the pull request._
+- **Checks by the team:** Esteve took the four decisions above before drafting. The behavior described in the contract was checked by running the implementation (entry 9, `scripts/api_check.sh`, 6/6). Adam's review of the contract on PR #6 is pending.
 
 ---
 
@@ -122,7 +122,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** Next.js 16 project (create-next-app), `lib/types.ts`, `lib/layout.ts` (C3), `lib/statusStore.ts` (C4), `lib/seatStatus.ts` (C2, including the R2 60-minute expiry), `app/api/tables/route.ts`, 7 Vitest tests (S1-AC1, S1-AC2, R2, sort order, route status/headers), placeholder home page, README run instructions.
 - **Checks run by the AI (2026-10-15):** `npm test` 7/7 passed; `tsc --noEmit`, `npm run lint` and `npm run build` succeeded; `next start` served `GET /api/tables` with `200`, `Cache-Control: no-store`, and 12 free tables.
 - **What the AI did not do:** C1 Map UI (Adam), S2 endpoints (Step 3). No screenshots yet.
-- **Checks by the team:** _To fill: Esteve runs `npm test` and the app; Adam reviews the PR._
+- **Checks by the team:** Esteve re-ran `npm test` on 2026-10-15 at 19:00 KST (commit `d786cca`, which includes this code): 28/28 passed, including the 7 tests from this entry ([screenshot](evidence/2026-10-15_esteve_npm_test.png)). Adam's review on PR #7 is pending.
 
 ---
 
@@ -133,7 +133,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Milestone:** Midterm, Step 3 (S2 backend and security check)
 - **Purpose:** Implement `POST /api/tables/{id}/checkin` and `/checkout` from API_contract.md, with rules R1, R2 and the check-out token.
 - **Input given to the AI:** API_contract.md, the code from entry 8, BACKLOG.md (R1, R2).
-- **Output:** `checkIn` / `checkOut` / `tableExists` in `lib/seatStatus.ts` (C2), `lib/apiErrors.ts`, the two route handlers, response types in `lib/types.ts`, 21 new tests (28 in total), [manual API check](evidence/2026-10-15_api_manual_check.md).
+- **Output:** `checkIn` / `checkOut` / `tableExists` in `lib/seatStatus.ts` (C2), `lib/apiErrors.ts`, the two route handlers, response types in `lib/types.ts`, 21 new tests (28 in total), [manual API check](evidence/2026-10-15_api_manual_check.md) and `scripts/api_check.sh` to re-run it.
 - **Checks run by the AI (2026-10-15):** `npm test` 28/28 passed; `tsc --noEmit`, `npm run lint`, `npm run build` succeeded; manual `curl` check on `next start`: all six results match the contract (see the evidence file).
 - **What the AI did not do:** No UI for the buttons (Adam), no security section text (Adam). The checks were not repeated by a team member yet.
-- **Checks by the team:** _To fill: Esteve re-runs `npm test` and the manual check; Adam reviews the PR._
+- **Checks by the team:** Esteve re-ran both checks on 2026-10-15 at 19:00 KST (commit `d786cca`): `npm test` 28/28 passed; `bash scripts/api_check.sh` 6/6 passed with the expected status codes ([evidence](evidence/2026-10-15_api_manual_check.md)). Adam's review on PR #8 is pending.

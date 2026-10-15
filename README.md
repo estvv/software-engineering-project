@@ -17,6 +17,7 @@ npm install
 npm run dev     # app on http://localhost:3000, API at /api/tables
 npm test        # unit and route tests (Vitest)
 npm run build   # production build
+bash scripts/api_check.sh   # manual API check: 6 requests, expected vs actual
 ```
 
 Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
