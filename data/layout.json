@@ -1,0 +1,68 @@
+{
+  "note": "TEMPORARY placeholder layout (3 x 4 grid). Not the real cafeteria: to be replaced from the team's sketch and photos (backlog item P2).",
+  "cafeteria": "Inha student cafeteria",
+  "rows": 3,
+  "cols": 4,
+  "tables": [
+    {
+      "id": "T1",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "T2",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "T3",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "T4",
+      "row": 0,
+      "col": 3
+    },
+    {
+      "id": "T5",
+      "row": 1,
+      "col": 0
+    },
+    {
+      "id": "T6",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "T7",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "T8",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "id": "T9",
+      "row": 2,
+      "col": 0
+    },
+    {
+      "id": "T10",
+      "row": 2,
+      "col": 1
+    },
+    {
+      "id": "T11",
+      "row": 2,
+      "col": 2
+    },
+    {
+      "id": "T12",
+      "row": 2,
+      "col": 3
+    }
+  ]
+}

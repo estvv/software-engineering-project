@@ -94,3 +94,17 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **What the AI did not do:** It did not take the decisions. The AI proposed options; Esteve chose Next.js (instead of the suggested Node + Express), rejection of check-ins at occupied tables (R1), and a 60-minute expiry (R2).
 - **Checks by the team:** Esteve chose the options and asked for the files. Adam's review on the pull request is pending.
 - **Changes made by the team:** _To fill after Adam's review._
+
+---
+
+## Entry 7 — API contract v1 and temporary layout
+
+- **Date:** 2026-10-15
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm, Step 1 (Week 6 API contract)
+- **Purpose:** Draft the C1 → C2 API contract and a placeholder `data/layout.json`.
+- **Input given to the AI:** Architecture_v1.md, M2_story_slice.md, BACKLOG.md (R1, R2), the Week 6 and Week 7 lecture slides.
+- **Output:** A first draft of API_contract.md (3 operations, JSON representations, error codes, traceability, known limits) and a 3 × 4 placeholder layout (T1–T12).
+- **Team decisions taken before drafting:** Esteve chose: `noFreeTable` flag decided by C2; check-out token in the contract from v1; grid row/column positions; a placeholder layout until the cafeteria sketch is done.
+- **What the AI did not do:** No code, no test run. The layout is not the real cafeteria and is labeled as temporary.
+- **Checks by the team:** _To fill: Esteve's read-through and Adam's review on the pull request._
