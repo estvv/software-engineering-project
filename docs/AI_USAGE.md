@@ -80,3 +80,17 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **What the AI did not do:** It did not decide any change; every change comes from Adam's review comments.
 - **Checks by the team:** Esteve asked for the fixes and reviewed the diff. Adam wrote the review comments and wanted these changes.
 - **Changes made by the team:** The review points came from Adam; the wording follows his suggestions. His review, sign-off and "reopened and checked by" fields were filled on 2026-10-12.
+
+---
+
+## Entry 6 — Midterm plan and R1/R2 decisions
+
+- **Date:** 2026-10-15
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm report (Week 8)
+- **Purpose:** Turn the midterm submission guide into a step-by-step plan with owners, and record the team's decisions on the stack and rules R1/R2.
+- **Input given to the AI:** All files in this repository and all course PDFs (syllabus, weeks 2–7, midterm submission guide, report template).
+- **Output / changes made by the AI:** New MIDTERM_PLAN.md; R1 and R2 rows in BACKLOG.md updated with the decisions; README documents table updated.
+- **What the AI did not do:** It did not take the decisions. The AI proposed options; Esteve chose Next.js (instead of the suggested Node + Express), rejection of check-ins at occupied tables (R1), and a 60-minute expiry (R2).
+- **Checks by the team:** Esteve chose the options and asked for the files. Adam's review on the pull request is pending.
+- **Changes made by the team:** _To fill after Adam's review._
