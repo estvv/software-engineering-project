@@ -108,3 +108,18 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Team decisions taken before drafting:** Esteve chose: `noFreeTable` flag decided by C2; check-out token in the contract from v1; grid row/column positions; a placeholder layout until the cafeteria sketch is done.
 - **What the AI did not do:** No code, no test run. The layout is not the real cafeteria and is labeled as temporary.
 - **Checks by the team:** _To fill: Esteve's read-through and Adam's review on the pull request._
+
+---
+
+## Entry 8 — Next.js setup and S1 backend
+
+- **Date:** 2026-10-15
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm, Step 2 (S1 backend)
+- **Purpose:** Set up the Next.js project and implement C2, C3, C4 and `GET /api/tables` from API_contract.md, with tests.
+- **Input given to the AI:** API_contract.md, Architecture_v1.md, M2_story_slice.md, data/layout.json.
+- **Team decisions taken before coding:** Esteve chose TypeScript, Vitest, npm, and the app at the repository root.
+- **Output:** Next.js 16 project (create-next-app), `lib/types.ts`, `lib/layout.ts` (C3), `lib/statusStore.ts` (C4), `lib/seatStatus.ts` (C2, including the R2 60-minute expiry), `app/api/tables/route.ts`, 7 Vitest tests (S1-AC1, S1-AC2, R2, sort order, route status/headers), placeholder home page, README run instructions.
+- **Checks run by the AI (2026-10-15):** `npm test` 7/7 passed; `tsc --noEmit`, `npm run lint` and `npm run build` succeeded; `next start` served `GET /api/tables` with `200`, `Cache-Control: no-store`, and 12 free tables.
+- **What the AI did not do:** C1 Map UI (Adam), S2 endpoints (Step 3). No screenshots yet.
+- **Checks by the team:** _To fill: Esteve runs `npm test` and the app; Adam reviews the PR._

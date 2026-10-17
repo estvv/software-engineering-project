@@ -6,7 +6,27 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Requirements and architecture drafts. No application code yet.
+**Status:** Midterm work in progress. Backend for S1 (`GET /api/tables`) implemented and tested; map UI (C1) and check-in/check-out (S2) not started. Table statuses are kept in memory and the table layout is a temporary placeholder.
+
+## Run
+
+Requires Node.js 20.9 or later.
+
+```bash
+npm install
+npm run dev     # app on http://localhost:3000, API at /api/tables
+npm test        # unit and route tests (Vitest)
+npm run build   # production build
+```
+
+Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
+
+| Component | Files |
+|---|---|
+| C1 Map UI | `app/page.tsx` (placeholder) |
+| C2 Seat Status Service | `lib/seatStatus.ts`, route handlers in `app/api/` |
+| C3 Table Layout | `data/layout.json`, `lib/layout.ts` |
+| C4 Status Store | `lib/statusStore.ts` (in memory) |
 
 ## Documents
 
