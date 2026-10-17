@@ -28,6 +28,18 @@ export type ErrorCode =
   | "INVALID_TOKEN"
   | "INTERNAL_ERROR";
 
+/** Body of POST /api/tables/{id}/checkin, status 201. */
+export interface CheckInResponse {
+  table: Table;
+  checkinToken: string;
+  expiresAt: string;
+}
+
+/** Body of POST /api/tables/{id}/checkout, status 200. */
+export interface CheckOutResponse {
+  table: Table;
+}
+
 export interface ErrorBody {
   error: { code: ErrorCode; message: string };
 }
