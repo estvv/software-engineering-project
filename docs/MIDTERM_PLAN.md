@@ -40,11 +40,11 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 - [x] Decide R1 and R2 (recorded in [BACKLOG.md](BACKLOG.md))
 - [x] Adam reviews these decisions on the PR
 - [x] Create one GitHub issue per step below, each with an owner (issues #9–#24, milestone "Midterm")
-- [ ] Commit the `.gitignore`
+- [x] Commit the `.gitignore`
 
 ### Step 1 — Inputs for the code (Fri 10-16 – Sat 10-17)
 - [ ] **Esteve:** sketch and photograph the cafeteria (P2), then write `data/layout.json` (table IDs and grid row/column) — C3
-- [ ] **Esteve:** write `docs/API_contract.md` (Week 6): `GET /api/tables`, `POST /api/tables/{id}/checkin`, `POST /api/tables/{id}/checkout`, with input, result and errors (400, 403, 404, 409). Adam reviews.
+- [x] **Esteve:** write `docs/API_contract.md` (Week 6): `GET /api/tables`, `POST /api/tables/{id}/checkin`, `POST /api/tables/{id}/checkout`, with input, result and errors (400, 403, 404, 409). Adam reviews.
 
 ### Step 2 — Implement S1 (Sun 10-18 – Tue 10-20)
 - [x] **Esteve:** Next.js project setup, C2 + C4, `GET /api/tables`, unit tests for S1-AC1 (T1 free, T2 occupied) and S1-AC2 (all occupied → "no free table")
@@ -54,10 +54,10 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 ### Step 3 — Implement S2 and the security check (Wed 10-21 – Thu 10-22)
 - [x] **Esteve:** check-in / check-out endpoints, R1 (409) and R2 (60 min expiry), tests for S2-AC1, S2-AC2, R1, R2
 - [x] **Adam:** "I'm sitting here" and "I'm leaving" buttons
-- [ ] **Adam (Esteve reviews), security:** _(token check implemented and tested by Esteve on 2026-10-15; the report section remains)_ risk = anyone can free someone else's table (integrity / authorization, Week 7 IDOR). Response = check-in returns a token; check-out requires it; no account and no name stored (data minimization). Executed check = a test that a check-out with a wrong token is rejected. Add one sentence on the privacy risk of "open to company" (excluded for now).
+- [x] **Adam (Esteve reviews), security:** _(token check implemented and tested by Esteve on 2026-10-15; the report section remains)_ risk = anyone can free someone else's table (integrity / authorization, Week 7 IDOR). Response = check-in returns a token; check-out requires it; no account and no name stored (data minimization). Executed check = a test that a check-out with a wrong token is rejected. Add one sentence on the privacy risk of "open to company" (excluded for now).
 
 ### Step 4 — Docs and frozen version (Fri 10-23)
-- [ ] **Esteve:** README run and test instructions; update Architecture v1 and BACKLOG if behavior changed
+- [x] **Esteve:** README run and test instructions; update Architecture v1 and BACKLOG if behavior changed
 - [ ] Tag the submitted version `midterm-v1`
 
 ### Step 5 — Report (Fri 10-23 – Sat 10-24)
@@ -75,7 +75,7 @@ Template: course file `report_templates.docx` (Week 7).
 | Evidence appendix | Both | Screenshots, test output, links, AI_USAGE.md |
 
 - [ ] Each member reviews the other's sections
-- [ ] Each member writes their individual report (my work + links, one decision, how I checked it, next task)
+- [x] Each member writes their individual report (my work + links, one decision, how I checked it, next task)
 
 ### Step 6 — Submit (Sun 10-25, finish before the evening)
 - [ ] Esteve uploads `15_Midterm.pdf` (team ID 15)

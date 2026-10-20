@@ -5,7 +5,7 @@
 **Members:** Esteve BASCUNANA (12264733), Adam LARKEM (12264692)
 **Date:** 2026-09-29
 **Writer:** Esteve BASCUNANA **Reviewer:** Adam LARKEM (on the pull request)
-**Status:** Draft for M3. Planned structure only. No code has been written or run.
+**Status:** M3 version, kept as reviewed. Sections 1–7 describe the plan before any code; what changed since is in section 8.
 
 ---
 
@@ -136,3 +136,11 @@ Saved in the team repository as `docs/Architecture_v1.md` (branch `docs/architec
 
 **AI use**
 Used. See AI_USAGE.md, entry 3 (2026-09-29).
+
+---
+
+## 8. Update after the midterm implementation (2026-10-20)
+
+- **Implemented:** the four components exist as one Next.js app: C1 `app/page.tsx`, C2 `lib/seatStatus.ts` with the route handlers in `app/api/tables/`, C3 `data/layout.json` (temporary 3 × 4 grid), C4 `lib/statusStore.ts` (in memory). The C1 → C2 interaction from section 6 became [API_contract.md](API_contract.md).
+- **Unknowns resolved:** an occupied-table check-in is rejected (R1) and a check-in expires after 60 minutes (R2), both decided on 2026-10-15 ([BACKLOG.md](BACKLOG.md)) and implemented in C2 only. Still open: how quickly other users must see a change (the map refreshes on load and after the student's own action).
+- **D1 check done:** the API contract did not change when R1 and R2 were implemented, and setting the R2 duration to 5 s in C2 only made the map show the table free again after 5 s with no change to C1 ([UI check](evidence/2026-10-17_c1_ui_check.md)).
