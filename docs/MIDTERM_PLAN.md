@@ -38,7 +38,7 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 ### Step 0 — Agree (Thu 10-15 – Fri 10-16, both)
 - [x] Choose the stack (Next.js)
 - [x] Decide R1 and R2 (recorded in [BACKLOG.md](BACKLOG.md))
-- [ ] Adam reviews these decisions on the PR
+- [x] Adam reviews these decisions on the PR
 - [x] Create one GitHub issue per step below, each with an owner (issues #9–#24, milestone "Midterm")
 - [ ] Commit the `.gitignore`
 
@@ -48,12 +48,12 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 
 ### Step 2 — Implement S1 (Sun 10-18 – Tue 10-20)
 - [x] **Esteve:** Next.js project setup, C2 + C4, `GET /api/tables`, unit tests for S1-AC1 (T1 free, T2 occupied) and S1-AC2 (all occupied → "no free table")
-- [ ] **Adam:** C1 map: color and text label per table, "No free table reported right now" message above the map
-- [ ] Both: run the app, take screenshots for S1-AC1 and S1-AC2
+- [x] **Adam:** C1 map: color and text label per table, "No free table reported right now" message above the map
+- [x] Both: run the app, take screenshots for S1-AC1 and S1-AC2 ([evidence](evidence/2026-10-17_c1_ui_check.md))
 
 ### Step 3 — Implement S2 and the security check (Wed 10-21 – Thu 10-22)
 - [x] **Esteve:** check-in / check-out endpoints, R1 (409) and R2 (60 min expiry), tests for S2-AC1, S2-AC2, R1, R2
-- [ ] **Adam:** "I'm sitting here" and "I'm leaving" buttons
+- [x] **Adam:** "I'm sitting here" and "I'm leaving" buttons
 - [ ] **Adam (Esteve reviews), security:** _(token check implemented and tested by Esteve on 2026-10-15; the report section remains)_ risk = anyone can free someone else's table (integrity / authorization, Week 7 IDOR). Response = check-in returns a token; check-out requires it; no account and no name stored (data minimization). Executed check = a test that a check-out with a wrong token is rejected. Add one sentence on the privacy risk of "open to company" (excluded for now).
 
 ### Step 4 — Docs and frozen version (Fri 10-23)

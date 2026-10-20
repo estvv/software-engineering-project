@@ -137,3 +137,18 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-10-15):** `npm test` 28/28 passed; `tsc --noEmit`, `npm run lint`, `npm run build` succeeded; manual `curl` check on `next start`: all six results match the contract (see the evidence file).
 - **What the AI did not do:** No UI for the buttons (Adam), no security section text (Adam). The checks were not repeated by a team member yet.
 - **Checks by the team:** Esteve re-ran both checks on 2026-10-15 at 19:00 KST (commit `d786cca`): `npm test` 28/28 passed; `bash scripts/api_check.sh` 6/6 passed with the expected status codes ([evidence](evidence/2026-10-15_api_manual_check.md)). Adam's review on PR #8 is pending.
+
+---
+
+## Entry 10 — C1 Map UI, S2 buttons and report sections 5–7
+
+- **Date:** 2026-10-17
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm, Steps 2, 3 and 5 (front-end and report)
+- **Purpose:** Implement C1 and the S2 buttons from API_contract.md, record the UI evidence, and draft report sections 5 (front-end part), 6 and 7, appendix A3 and Adam's individual report.
+- **Input given to the AI:** API_contract.md, `lib/types.ts`, the backend code (entries 8, 9), issues #14, #15, #18–#20, #23, and the team report draft (PR #25).
+- **Team decisions taken before coding:** In his review of PR #8, Adam chose to keep `checkinToken` per table in `localStorage`, show `error.message` unchanged for 403/409, and refetch the map after each action.
+- **Output:** `app/page.tsx`, `app/page.module.css`, README and MIDTERM_PLAN updates, [UI check](evidence/2026-10-17_c1_ui_check.md) with five screenshots and the D1 check, the text of report sections 5 (front-end), 6, 7 and A3, a draft of Adam's individual report, and Adam's review comment on PR #25.
+- **Checks run by the AI (2026-10-17):** `npm test` 28/28 passed; `npm run lint`, `npx tsc --noEmit`, `npm run build` succeeded; browser check on `next start`: 5/5 steps as expected; D1 check: R2 set to 5 s in C2 only, table free again after 5 s with no change to C1 (reverted, not committed).
+- **What the AI did not do:** No user research; every status in the screenshots was created by us. The checks were not repeated by a team member yet.
+- **Checks by the team:** Adam asked for the work and read the result. Re-run of the browser check by a team member and Esteve's review on PR #26: pending.
