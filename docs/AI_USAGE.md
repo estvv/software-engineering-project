@@ -92,8 +92,8 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Input given to the AI:** All files in this repository and all course PDFs (syllabus, weeks 2–7, midterm submission guide, report template).
 - **Output / changes made by the AI:** New MIDTERM_PLAN.md; R1 and R2 rows in BACKLOG.md updated with the decisions; README documents table updated.
 - **What the AI did not do:** It did not take the decisions. The AI proposed options; Esteve chose Next.js (instead of the suggested Node + Express), rejection of check-ins at occupied tables (R1), and a 60-minute expiry (R2).
-- **Checks by the team:** Esteve chose the options and asked for the files. Adam's review on the pull request is pending.
-- **Changes made by the team:** _To fill after Adam's review._
+- **Checks by the team:** Esteve chose the options and asked for the files. Adam approved the three decisions on PR #5 (2026-10-15).
+- **Changes made by the team:** None requested; the decisions were approved as proposed. Adam added that R2 (60 minutes) remains a question for the P1 user test.
 
 ---
 
@@ -107,7 +107,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** A first draft of API_contract.md (3 operations, JSON representations, error codes, traceability, known limits) and a 3 × 4 placeholder layout (T1–T12).
 - **Team decisions taken before drafting:** Esteve chose: `noFreeTable` flag decided by C2; check-out token in the contract from v1; grid row/column positions; a placeholder layout until the cafeteria sketch is done.
 - **What the AI did not do:** No code, no test run. The layout is not the real cafeteria and is labeled as temporary.
-- **Checks by the team:** Esteve took the four decisions above before drafting. The behavior described in the contract was checked by running the implementation (entry 9, `scripts/api_check.sh`, 6/6). Adam's review of the contract on PR #6 is pending.
+- **Checks by the team:** Esteve took the four decisions above before drafting. The behavior described in the contract was checked by running the implementation (entry 9, `scripts/api_check.sh`, 6/6). Adam approved the contract on PR #6 (2026-10-15) and confirmed he could build C1 from it alone.
 
 ---
 
@@ -122,7 +122,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** Next.js 16 project (create-next-app), `lib/types.ts`, `lib/layout.ts` (C3), `lib/statusStore.ts` (C4), `lib/seatStatus.ts` (C2, including the R2 60-minute expiry), `app/api/tables/route.ts`, 7 Vitest tests (S1-AC1, S1-AC2, R2, sort order, route status/headers), placeholder home page, README run instructions.
 - **Checks run by the AI (2026-10-15):** `npm test` 7/7 passed; `tsc --noEmit`, `npm run lint` and `npm run build` succeeded; `next start` served `GET /api/tables` with `200`, `Cache-Control: no-store`, and 12 free tables.
 - **What the AI did not do:** C1 Map UI (Adam), S2 endpoints (Step 3). No screenshots yet.
-- **Checks by the team:** Esteve re-ran `npm test` on 2026-10-15 at 19:00 KST (commit `d786cca`, which includes this code): 28/28 passed, including the 7 tests from this entry ([screenshot](evidence/2026-10-15_esteve_npm_test.png)). Adam's review on PR #7 is pending.
+- **Checks by the team:** Esteve re-ran `npm test` on 2026-10-15 at 19:00 KST (commit `d786cca`, which includes this code): 28/28 passed, including the 7 tests from this entry ([screenshot](evidence/2026-10-15_esteve_npm_test.png)). Adam approved PR #7 after running `npm ci`, `npm test` (28/28), `npm run build` and `npm run lint` on a fresh clone with Node 22.
 
 ---
 
@@ -136,7 +136,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** `checkIn` / `checkOut` / `tableExists` in `lib/seatStatus.ts` (C2), `lib/apiErrors.ts`, the two route handlers, response types in `lib/types.ts`, 21 new tests (28 in total), [manual API check](evidence/2026-10-15_api_manual_check.md) and `scripts/api_check.sh` to re-run it.
 - **Checks run by the AI (2026-10-15):** `npm test` 28/28 passed; `tsc --noEmit`, `npm run lint`, `npm run build` succeeded; manual `curl` check on `next start`: all six results match the contract (see the evidence file).
 - **What the AI did not do:** No UI for the buttons (Adam), no security section text (Adam). The checks were not repeated by a team member yet.
-- **Checks by the team:** Esteve re-ran both checks on 2026-10-15 at 19:00 KST (commit `d786cca`): `npm test` 28/28 passed; `bash scripts/api_check.sh` 6/6 passed with the expected status codes ([evidence](evidence/2026-10-15_api_manual_check.md)). Adam's review on PR #8 is pending.
+- **Checks by the team:** Esteve re-ran both checks on 2026-10-15 at 19:00 KST (commit `d786cca`): `npm test` 28/28 passed; `bash scripts/api_check.sh` 6/6 passed with the expected status codes ([evidence](evidence/2026-10-15_api_manual_check.md)). Adam approved PR #8 after re-running the tests, build and lint, and reading both routes against the contract.
 
 ---
 
@@ -152,3 +152,18 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-10-17):** `npm test` 28/28 passed; `npm run lint`, `npx tsc --noEmit`, `npm run build` succeeded; browser check on `next start`: 5/5 steps as expected; D1 check: R2 set to 5 s in C2 only, table free again after 5 s with no change to C1 (reverted, not committed).
 - **What the AI did not do:** No user research; every status in the screenshots was created by us. The checks were not repeated by a team member yet.
 - **Checks by the team:** Adam asked for the work and read the result. Re-run of the browser check by a team member and Esteve's review on PR #26: pending.
+
+---
+
+## Entry 11 — Midterm report (sections 1–5 backend), Esteve's individual report, review follow-ups
+
+- **Date:** 2026-10-15 (report draft), 2026-10-20 (follow-ups)
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Midterm, Steps 4 and 5
+- **Purpose:** Fill the course report template with sections 1–4, section 5 (backend part), the references and appendix A1, A2, A4, A5; draft Esteve's individual report; apply the open review comments from Adam on PRs #5–#8.
+- **Input given to the AI:** The midterm submission guide, `report_templates.docx`, M1, M2, Architecture v1, BACKLOG.md, API_contract.md, the evidence files and Esteve's screenshots (entries 6–9).
+- **Team decisions taken before drafting:** Esteve chose to fill the course `.docx` template, the decision for his individual report (check-out token), and the split of report sections (plan, Step 5).
+- **Output:** `docs/report/15_Midterm.docx` (sections 1–5 backend, appendix), `docs/report/structure_diagram.svg/.png`, `docs/report/12264733_Midterm.docx`; on 2026-10-20: the status lines of API_contract.md and Architecture v1 (section 8), R1/R2 marked approved in BACKLOG.md, the `npx next typegen` note in the README, and the review results in entries 6–9.
+- **Checks run by the AI (2026-10-20, branch `feat/c1-map-ui`):** `npm test` 28/28, `npm run lint`, `npm run build`, `npx tsc --noEmit` OK; `bash scripts/api_check.sh` 6/6.
+- **What the AI did not do:** No result in the report comes from the AI's own runs without a team re-run: A1 and A2 are Esteve's runs. The sentence on what Esteve read in the code is left for him to write. The AI did not review or merge any pull request.
+- **Checks by the team:** Adam reviewed sections 1–5 on PR #25 and corrected the outdated UI statuses. Esteve's review of the follow-ups: on the pull request.

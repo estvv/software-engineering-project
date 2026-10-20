@@ -20,6 +20,8 @@ npm run build   # production build
 bash scripts/api_check.sh   # manual API check: 6 requests, expected vs actual
 ```
 
+On a fresh clone, `npx tsc --noEmit` fails until Next has generated its route types: run `npm run build` or `npx next typegen` first.
+
 Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 
 | Component | Files |

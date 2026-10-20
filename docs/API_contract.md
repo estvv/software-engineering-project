@@ -3,7 +3,7 @@
 **Team:** EPITECH (team 15)
 **Date:** 2026-10-15
 **Writer:** Esteve BASCUNANA **Reviewer:** Adam LARKEM (on the pull request)
-**Status:** Draft. Planned contract only. Nothing is implemented yet.
+**Status:** v1, approved by Adam on PR #6 (2026-10-15). Implemented by C2 (PR #7, #8) and used by C1 (PR #26).
 
 This contract is the interface between C1 Map UI and C2 Seat Status Service ([Architecture v1](Architecture_v1.md), section 6). C1 depends only on this contract, not on how C2 and C4 store data. Rule changes in C2 (decision D1) must not change it.
 
@@ -118,7 +118,7 @@ Used by S2-AC2.
 
 ## 3. Traceability
 
-| Requirement / rule | Where it shows in the contract | Planned check |
+| Requirement / rule | Where it shows in the contract | Check |
 |---|---|---|
 | S1-AC1 | `GET /api/tables` returns T1 `"free"` and T2 `"occupied"` | Unit test on C2 + screenshot of the map |
 | S1-AC2 | `GET /api/tables` returns `noFreeTable: true` when all tables are occupied | Unit test on C2 + screenshot of the message |
@@ -128,7 +128,7 @@ Used by S2-AC2.
 | R2 | Status is `"free"` once `expiresAt` has passed | Unit test on C2 with a fixed clock |
 | Security (Step 3) | `checkout` with a wrong token → `403 INVALID_TOKEN` | Route test |
 
-These checks are planned. None has been run.
+All checks above have been run. Unit tests: `lib/seatStatus.test.ts`; route tests: `app/api/tables/route.test.ts` and `app/api/tables/[id]/checkin-checkout.test.ts` (28/28, re-run by Esteve on 2026-10-15, commit `d786cca`). Manual API check: [evidence](evidence/2026-10-15_api_manual_check.md), 6/6. Screenshots of the map: [UI check](evidence/2026-10-17_c1_ui_check.md).
 
 ---
 
