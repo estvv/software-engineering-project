@@ -151,7 +151,7 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Output:** `app/page.tsx`, `app/page.module.css`, README and MIDTERM_PLAN updates, [UI check](evidence/2026-10-17_c1_ui_check.md) with five screenshots and the D1 check, the text of report sections 5 (front-end), 6, 7 and A3, a draft of Adam's individual report, and Adam's review comment on PR #25.
 - **Checks run by the AI (2026-10-17):** `npm test` 28/28 passed; `npm run lint`, `npx tsc --noEmit`, `npm run build` succeeded; browser check on `next start`: 5/5 steps as expected; D1 check: R2 set to 5 s in C2 only, table free again after 5 s with no change to C1 (reverted, not committed).
 - **What the AI did not do:** No user research; every status in the screenshots was created by us. The checks were not repeated by a team member yet.
-- **Checks by the team:** Adam asked for the work and read the result. Re-run of the browser check by a team member and Esteve's review on PR #26: pending.
+- **Checks by the team:** Adam asked for the work and read the result. Esteve re-ran step 1 of the browser check on 2026-10-20 ([evidence](evidence/2026-10-17_c1_ui_check.md)); steps 2–5 were not re-run by a team member. PR #26 was merged on 2026-10-20 after `npm test` 28/28, build, `tsc` and `bash scripts/api_check.sh` 6/6 were re-run by Claude Code on the branch.
 
 ---
 
