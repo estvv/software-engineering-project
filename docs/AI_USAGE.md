@@ -182,3 +182,18 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-11-07):** `npm test` 33/33; `npm run lint`, `npx tsc --noEmit`, `npm run build` OK; three runs in two headless Chrome contexts; three temporary faults, each detected by the new tests.
 - **What the AI did not do:** No user research. No test on a real network or under load.
 - **Checks by the team:** To be done on the pull request.
+
+---
+
+## Entry 13 — Week 11 traceability, defect triage and backlog update
+
+- **Date:** 2026-11-07
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Week 11 (issue #31)
+- **Purpose:** Build the requirements-to-test matrix, propose a defect triage, and bring the backlog, README and GitHub milestones up to date.
+- **Input given to the AI:** The repository, the syllabus, the Week 10 slides, the M2 criteria, the tests and the evidence files.
+- **Team decisions taken before drafting:** None. The severities and decisions in the triage are proposals.
+- **Output:** `docs/Traceability.md`, updates to BACKLOG.md, README.md and MIDTERM_PLAN.md, issues #29 to #35, milestones "M4 MVP demo" and "M5 Release candidate", `severity:` labels.
+- **Checks run by the AI (2026-11-07):** Each row of the matrix compared with the test names and evidence files; `npm test` 33/33; `bash scripts/api_check.sh` 6/6; coverage report.
+- **What the AI did not do:** P1 and P2 were not done or simulated. No defect was fixed. Defects #33 and #34 come from reading the code, not from a run.
+- **Checks by the team:** To be done on the pull request.

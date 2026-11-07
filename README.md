@@ -6,7 +6,7 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Midterm work in progress. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser; the map refreshes every 5 seconds. Table statuses are kept in memory and the table layout is a temporary placeholder.
+**Status:** Midterm version tagged `midterm-v1`. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser; the map refreshes every 5 seconds. Table statuses are kept in memory and the table layout is a temporary placeholder.
 
 ## Run
 
@@ -42,5 +42,6 @@ Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 | [Architecture_v1.md](docs/Architecture_v1.md) | M3 prep (Week 5) | Component structure, criterion paths, decision D1 |
 | [API_contract.md](docs/API_contract.md) | M3 / Week 6 | C1 → C2 interface: operations, JSON, errors, traceability |
 | [MIDTERM_PLAN.md](docs/MIDTERM_PLAN.md) | Midterm (Week 8) | Step-by-step plan, owners and decisions for the midterm report |
+| [Traceability.md](docs/Traceability.md) | Week 11 | Criteria to tests and evidence, test levels, defect triage |
 | [AI_USAGE.md](docs/AI_USAGE.md) | All | Log of AI tool use and team checks |
 | [Git_practice_log.md](docs/Git_practice_log.md) | Self-study | Personal Git and GitHub practice record (not assessed) |

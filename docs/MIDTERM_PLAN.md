@@ -58,7 +58,7 @@ Mapping of the Architecture v1 components to the Next.js app (planned):
 
 ### Step 4 — Docs and frozen version (Fri 10-23)
 - [x] **Esteve:** README run and test instructions; update Architecture v1 and BACKLOG if behavior changed
-- [ ] Tag the submitted version `midterm-v1`
+- [x] Tag the submitted version `midterm-v1`
 
 ### Step 5 — Report (Fri 10-23 – Sat 10-24)
 Template: course file `report_templates.docx` (Week 7).
