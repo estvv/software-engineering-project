@@ -167,3 +167,18 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-10-20, branch `feat/c1-map-ui`):** `npm test` 28/28, `npm run lint`, `npm run build`, `npx tsc --noEmit` OK; `bash scripts/api_check.sh` 6/6.
 - **What the AI did not do:** No result in the report comes from the AI's own runs without a team re-run: A1 and A2 are Esteve's runs. The sentence on what Esteve read in the code is left for him to write. The AI did not review or merge any pull request.
 - **Checks by the team:** Adam reviewed sections 1–5 on PR #25 and corrected the outdated UI statuses. Esteve's review of the follow-ups: on the pull request.
+
+---
+
+## Entry 12 — Automatic map refresh and UI tests
+
+- **Date:** 2026-11-07
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** M4, report section 7 priority 3 (issue #29)
+- **Purpose:** Implement the map refresh, add the first automated UI tests and a coverage report, and check the "within 10 s" criterion in two browsers.
+- **Input given to the AI:** The repository, the syllabus, the Week 10 slides and report section 7. Esteve asked for the catch-up work.
+- **Team decisions taken before coding:** None beyond the criterion in report section 7. The 5 s interval, the "map may be out of date" message and the pause on hidden tabs were proposed by the AI and are open to review on the pull request.
+- **Output:** `app/page.tsx`, `app/page.test.tsx`, `test:coverage` script, [refresh check](evidence/2026-11-07_auto_refresh_check.md).
+- **Checks run by the AI (2026-11-07):** `npm test` 33/33; `npm run lint`, `npx tsc --noEmit`, `npm run build` OK; three runs in two headless Chrome contexts; three temporary faults, each detected by the new tests.
+- **What the AI did not do:** No user research. No test on a real network or under load.
+- **Checks by the team:** To be done on the pull request.
