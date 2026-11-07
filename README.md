@@ -6,7 +6,7 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Midterm work in progress. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser. Table statuses are kept in memory and the table layout is a temporary placeholder.
+**Status:** Midterm work in progress. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser; the map refreshes every 5 seconds. Table statuses are kept in memory and the table layout is a temporary placeholder.
 
 ## Run
 
@@ -15,7 +15,8 @@ Requires Node.js 20.9 or later.
 ```bash
 npm install
 npm run dev     # app on http://localhost:3000, API at /api/tables
-npm test        # unit and route tests (Vitest)
+npm test        # unit, route and UI tests (Vitest)
+npm run test:coverage   # same tests with a coverage report
 npm run build   # production build
 bash scripts/api_check.sh   # manual API check: 6 requests, expected vs actual
 ```

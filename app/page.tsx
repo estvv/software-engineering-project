@@ -3,12 +3,14 @@
 // C1 Map UI. It only displays what C2 returns through the API (decision D1):
 // statuses, "no free table" and error messages all come from the response.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CheckInResponse, ErrorBody, TablesResponse } from "@/lib/types";
 import styles from "./page.module.css";
 
 const GENERIC_ERROR = "Something went wrong, please retry.";
 const TOKENS_KEY = "seattogether.checkinTokens";
+// Other students' check-ins must appear within 10 s (report section 7), so we poll at half that.
+const REFRESH_MS = 5000;
 
 type Notice = { kind: "ok" | "error"; text: string };
 
@@ -62,12 +64,29 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [busy, setBusy] = useState(false);
+  const [stale, setStale] = useState(false);
+  const lastLoad = useRef(0);
+
+  // Only the most recent request may update the map: a slow poll must not
+  // overwrite the result of a check-in that finished after it started.
+  const loadTables = useCallback(async () => {
+    const load = ++lastLoad.current;
+    const tables = await request<TablesResponse>("/api/tables");
+    if (load === lastLoad.current) {
+      setData(tables);
+      setStale(false);
+    }
+  }, []);
 
   useEffect(() => {
-    request<TablesResponse>("/api/tables").then(setData, (e: Error) =>
-      setNotice({ kind: "error", text: e.message }),
-    );
-  }, []);
+    loadTables().catch((e: Error) => setNotice({ kind: "error", text: e.message }));
+    const timer = setInterval(() => {
+      if (document.hidden) return;
+      // Keep the last map on failure, but say that it may be out of date.
+      loadTables().catch(() => setStale(true));
+    }, REFRESH_MS);
+    return () => clearInterval(timer);
+  }, [loadTables]);
 
   async function run(action: (tableId: string) => Promise<string>) {
     if (!selectedId) return;
@@ -79,7 +98,7 @@ export default function Home() {
       setNotice({ kind: "error", text: (e as Error).message });
     }
     try {
-      setData(await request<TablesResponse>("/api/tables"));
+      await loadTables();
     } catch (e) {
       setNotice({ kind: "error", text: (e as Error).message });
     }
@@ -96,6 +115,12 @@ export default function Home() {
       {data?.noFreeTable && (
         <p className={styles.noFree} role="status">
           No free table reported right now
+        </p>
+      )}
+
+      {stale && (
+        <p className={styles.error} role="status">
+          Connection lost: the map may be out of date.
         </p>
       )}
 
