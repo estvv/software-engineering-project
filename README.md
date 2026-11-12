@@ -30,7 +30,6 @@ Requires Node.js 22 (the version used in CI and in the image).
 npm ci
 npm run dev     # app on http://localhost:3000, API at /api/tables
 npm test        # unit, route and UI tests (Vitest)
-npm run test:coverage   # same tests with a coverage report
 npm run lint
 npm run build   # production build (standalone output, used by the Dockerfile)
 bash scripts/api_check.sh   # manual API check: 6 requests, expected vs actual
@@ -49,7 +48,7 @@ On a fresh clone, `npx tsc --noEmit` fails until Next has generated its route ty
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request and on `main`:
 
-1. **Lint, test, build:** `npm ci`, `npm run lint`, `npm run test:coverage` with a PostgreSQL service (so the store tests run on a real database), `npm run build`. The coverage report is kept as a build artifact.
+1. **Lint, test, build:** `npm ci`, `npm run lint`, `npm test` with a PostgreSQL service (so the store tests run on a real database), `npm run build`.
 2. **Docker:** builds the image and runs `scripts/compose_smoke.sh` against it.
 3. **Delivery:** on a push to `main` or a `v*` tag, the image is published to `ghcr.io/estvv/software-engineering-project` (tags `latest` or the version, plus `sha-<commit>`).
 
