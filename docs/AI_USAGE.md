@@ -167,3 +167,19 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-10-20, branch `feat/c1-map-ui`):** `npm test` 28/28, `npm run lint`, `npm run build`, `npx tsc --noEmit` OK; `bash scripts/api_check.sh` 6/6.
 - **What the AI did not do:** No result in the report comes from the AI's own runs without a team re-run: A1 and A2 are Esteve's runs. The sentence on what Esteve read in the code is left for him to write. The AI did not review or merge any pull request.
 - **Checks by the team:** Adam reviewed sections 1–5 on PR #25 and corrected the outdated UI statuses. Esteve's review of the follow-ups: on the pull request.
+
+---
+
+## Entry 14 — Week 12: PostgreSQL store, Docker image, CI/CD
+
+- **Date:** 2026-11-12
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Week 12 (CI/CD, containers and deployment), towards M5
+- **Purpose:** Replace the in-memory store with PostgreSQL (issue #35), package the app as a Docker image with Compose, and add a CI/CD pipeline.
+- **Input given to the AI:** The syllabus (Week 12 topic), the code of C2 and C4, the tests, BACKLOG.md, Traceability (defect #35).
+- **Team decisions taken before coding:** Esteve asked for CI/CD with Docker and a move to PostgreSQL.
+- **Decisions proposed by the AI, to confirm in review:** keep a memory fallback when `DATABASE_URL` is not set; make `claim` and `release` atomic in C4 so R1 holds under concurrent check-ins, with C2 still passing the R2 limit; create the table on first use instead of a separate migration tool; publish the image to GitHub Container Registry on `main` and `v*` tags; Node 22 in the image and CI (Node 20 is past end of life).
+- **Output:** `lib/statusStore.ts` (async interface, PostgreSQL and memory stores), async `lib/seatStatus.ts` and route handlers (with error logging), `lib/statusStore.test.ts`, updated tests, `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `.env.example`, `scripts/compose_smoke.sh`, `.github/workflows/ci.yml`, README, API contract section 5, Architecture section 9, [evidence](evidence/2026-11-12_postgres_docker_check.md).
+- **Checks run by the AI (2026-11-12):** tests 38/38 with a PostgreSQL container; `compose_smoke.sh` 5/5; lint, build and `tsc` OK (details in the evidence file).
+- **What the AI did not do:** No load test, no deployment to a public server, no backup of the database. The AI did not review or merge the pull request.
+- **Checks by the team:** pending (re-run `compose_smoke.sh` and `npm test` with `TEST_DATABASE_URL`, review on the pull request).

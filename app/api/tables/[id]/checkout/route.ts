@@ -3,7 +3,7 @@
 import { errorResponse, noStore } from "@/lib/apiErrors";
 import { getLayout } from "@/lib/layout";
 import { checkOut, tableExists } from "@/lib/seatStatus";
-import { statusStore } from "@/lib/statusStore";
+import { getStatusStore } from "@/lib/statusStore";
 import type { CheckOutResponse } from "@/lib/types";
 
 /** Reads `checkinToken` from the JSON body, or null if the body is invalid. */
@@ -30,12 +30,14 @@ export async function POST(
     const token = await readToken(request);
     if (token === null) return errorResponse("INVALID_BODY");
 
-    const result = checkOut(layout, statusStore, id, token, new Date());
+    const result = await checkOut(layout, getStatusStore(), id, token, new Date());
     if (!result.ok) return errorResponse(result.code);
 
     const body: CheckOutResponse = { table: result.table };
     return Response.json(body, { headers: noStore });
-  } catch {
+  } catch (error) {
+    // Logged for the operator (e.g. database down); the student sees a generic message.
+    console.error("[C2] POST checkout failed:", error);
     return errorResponse("INTERNAL_ERROR");
   }
 }

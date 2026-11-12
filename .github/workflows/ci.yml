@@ -1,0 +1,76 @@
+# Week 12: continuous integration and delivery.
+# Every push and pull request: lint, tests (with a real PostgreSQL), build.
+# Then the Docker image is built and checked end to end with docker compose.
+# On main and on version tags (v*), the image is published to GitHub Container Registry.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: ci-only
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgres://postgres:ci-only@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - name: Tests (memory and PostgreSQL stores)
+        run: npm test
+      - run: npm run build
+
+  docker:
+    name: Docker image and system check
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      APP_IMAGE: seattogether:ci
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build the image
+        run: docker build -t "$APP_IMAGE" .
+      - name: System check with docker compose (restart keeps check-ins, #35)
+        run: SMOKE_NO_BUILD=1 bash scripts/compose_smoke.sh
+
+      - name: Publish to GitHub Container Registry
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          tags=("sha-${GITHUB_SHA::7}")
+          if [ "$GITHUB_REF_TYPE" = tag ]; then tags+=("$GITHUB_REF_NAME"); else tags+=(latest); fi
+          for t in "${tags[@]}"; do
+            docker tag "$APP_IMAGE" "$image:$t"
+            docker push "$image:$t"
+          done

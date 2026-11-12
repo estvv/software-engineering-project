@@ -6,21 +6,51 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Midterm work in progress. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser. Table statuses are kept in memory and the table layout is a temporary placeholder.
+**Status:** Midterm version tagged `midterm-v1`. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser. Since Week 12, check-ins are stored in PostgreSQL and the app ships as a Docker image, built and checked by CI on every pull request. The table layout is still a temporary placeholder.
 
 ## Run
 
-Requires Node.js 20.9 or later.
+### With Docker (app + PostgreSQL)
+
+Requires Docker with Compose v2.
 
 ```bash
-npm install
+cp .env.example .env    # then set POSTGRES_PASSWORD
+docker compose up --build -d    # app on http://localhost:3000
+docker compose logs -f app
+docker compose down             # stop; add -v to also delete the stored check-ins
+bash scripts/compose_smoke.sh   # system check: check-in, app restart, check-in kept, check-out
+```
+
+### Without Docker
+
+Requires Node.js 22 (the version used in CI and in the image).
+
+```bash
+npm ci
 npm run dev     # app on http://localhost:3000, API at /api/tables
-npm test        # unit and route tests (Vitest)
-npm run build   # production build
+npm test        # unit, route and UI tests (Vitest)
+npm run lint
+npm run build   # production build (standalone output, used by the Dockerfile)
 bash scripts/api_check.sh   # manual API check: 6 requests, expected vs actual
 ```
 
+Without `DATABASE_URL`, check-ins are kept in memory and lost on restart (a warning is logged). To use PostgreSQL, set `DATABASE_URL=postgres://user:password@host:5432/db`; the `checkins` table is created on first use. The PostgreSQL store tests are skipped unless `TEST_DATABASE_URL` is set, for example:
+
+```bash
+docker run -d --rm --name st-pg -e POSTGRES_PASSWORD=dev -p 5432:5432 postgres:17-alpine
+TEST_DATABASE_URL=postgres://postgres:dev@localhost:5432/postgres npm test
+```
+
 On a fresh clone, `npx tsc --noEmit` fails until Next has generated its route types: run `npm run build` or `npx next typegen` first.
+
+### CI/CD
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on every pull request and on `main`:
+
+1. **Lint, test, build:** `npm ci`, `npm run lint`, `npm test` with a PostgreSQL service (so the store tests run on a real database), `npm run build`.
+2. **Docker:** builds the image and runs `scripts/compose_smoke.sh` against it.
+3. **Delivery:** on a push to `main` or a `v*` tag, the image is published to `ghcr.io/estvv/software-engineering-project` (tags `latest` or the version, plus `sha-<commit>`).
 
 Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 
@@ -29,7 +59,8 @@ Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 | C1 Map UI | `app/page.tsx`, `app/page.module.css` |
 | C2 Seat Status Service | `lib/seatStatus.ts`, route handlers in `app/api/`, errors in `lib/apiErrors.ts` |
 | C3 Table Layout | `data/layout.json`, `lib/layout.ts` |
-| C4 Status Store | `lib/statusStore.ts` (in memory) |
+| C4 Status Store | `lib/statusStore.ts` (PostgreSQL, or memory without `DATABASE_URL`) |
+| Deployment | `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml` |
 
 ## Documents
 
