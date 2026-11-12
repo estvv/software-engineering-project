@@ -12,11 +12,11 @@ const layout: LayoutTable[] = [
 ];
 
 describe("C2 getTableStatuses", () => {
-  it("S1-AC1: T1 free and T2 occupied are returned with their status", () => {
+  it("S1-AC1: T1 free and T2 occupied are returned with their status", async () => {
     const store = createMemoryStore();
-    store.set("T2", { token: "t2", checkedInAt: minutesAgo(5) });
+    await store.set("T2", { token: "t2", checkedInAt: minutesAgo(5) });
 
-    const result = getTableStatuses(layout, store, NOW);
+    const result = await getTableStatuses(layout, store, NOW);
 
     expect(result.tables).toEqual([
       { id: "T1", row: 0, col: 0, status: "free" },
@@ -25,29 +25,29 @@ describe("C2 getTableStatuses", () => {
     expect(result.noFreeTable).toBe(false);
   });
 
-  it("S1-AC2: every table occupied gives noFreeTable and still returns the tables", () => {
+  it("S1-AC2: every table occupied gives noFreeTable and still returns the tables", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "t1", checkedInAt: minutesAgo(10) });
-    store.set("T2", { token: "t2", checkedInAt: minutesAgo(20) });
+    await store.set("T1", { token: "t1", checkedInAt: minutesAgo(10) });
+    await store.set("T2", { token: "t2", checkedInAt: minutesAgo(20) });
 
-    const result = getTableStatuses(layout, store, NOW);
+    const result = await getTableStatuses(layout, store, NOW);
 
     expect(result.noFreeTable).toBe(true);
     expect(result.tables.map((t) => t.status)).toEqual(["occupied", "occupied"]);
   });
 
-  it("R2: a check-in is occupied before 60 minutes and free from 60 minutes", () => {
+  it("R2: a check-in is occupied before 60 minutes and free from 60 minutes", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "t1", checkedInAt: new Date(NOW.getTime() - CHECKIN_DURATION_MS + 1) });
-    store.set("T2", { token: "t2", checkedInAt: new Date(NOW.getTime() - CHECKIN_DURATION_MS) });
+    await store.set("T1", { token: "t1", checkedInAt: new Date(NOW.getTime() - CHECKIN_DURATION_MS + 1) });
+    await store.set("T2", { token: "t2", checkedInAt: new Date(NOW.getTime() - CHECKIN_DURATION_MS) });
 
-    const result = getTableStatuses(layout, store, NOW);
+    const result = await getTableStatuses(layout, store, NOW);
 
     expect(result.tables.map((t) => t.status)).toEqual(["occupied", "free"]);
   });
 
-  it("sorts tables by ID in numeric order (T2 before T10)", () => {
-    const result = getTableStatuses(
+  it("sorts tables by ID in numeric order (T2 before T10)", async () => {
+    const result = await getTableStatuses(
       [{ id: "T10", row: 1, col: 0 }, { id: "T2", row: 0, col: 0 }],
       createMemoryStore(),
       NOW,
@@ -59,10 +59,10 @@ describe("C2 getTableStatuses", () => {
 describe("C2 checkIn", () => {
   const token = () => "new-token";
 
-  it("S2-AC1: checking in at a free table makes it occupied", () => {
+  it("S2-AC1: checking in at a free table makes it occupied", async () => {
     const store = createMemoryStore();
 
-    const result = checkIn(layout, store, "T1", NOW, token);
+    const result = await checkIn(layout, store, "T1", NOW, token);
 
     expect(result).toEqual({
       ok: true,
@@ -70,31 +70,31 @@ describe("C2 checkIn", () => {
       checkinToken: "new-token",
       expiresAt: new Date(NOW.getTime() + CHECKIN_DURATION_MS),
     });
-    expect(getTableStatuses(layout, store, NOW).tables[0].status).toBe("occupied");
+    expect((await getTableStatuses(layout, store, NOW)).tables[0].status).toBe("occupied");
   });
 
-  it("R1: checking in at an occupied table is rejected and keeps the first check-in", () => {
+  it("R1: checking in at an occupied table is rejected and keeps the first check-in", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "first", checkedInAt: minutesAgo(5) });
+    await store.set("T1", { token: "first", checkedInAt: minutesAgo(5) });
 
-    const result = checkIn(layout, store, "T1", NOW, token);
+    const result = await checkIn(layout, store, "T1", NOW, token);
 
     expect(result).toEqual({ ok: false, code: "TABLE_OCCUPIED" });
-    expect(store.get("T1")?.token).toBe("first");
+    expect((await store.get("T1"))?.token).toBe("first");
   });
 
-  it("R2: checking in at a table whose check-in expired is accepted", () => {
+  it("R2: checking in at a table whose check-in expired is accepted", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "old", checkedInAt: minutesAgo(61) });
+    await store.set("T1", { token: "old", checkedInAt: minutesAgo(61) });
 
-    const result = checkIn(layout, store, "T1", NOW, token);
+    const result = await checkIn(layout, store, "T1", NOW, token);
 
     expect(result.ok).toBe(true);
-    expect(store.get("T1")?.token).toBe("new-token");
+    expect((await store.get("T1"))?.token).toBe("new-token");
   });
 
-  it("rejects an unknown table", () => {
-    expect(checkIn(layout, createMemoryStore(), "T99", NOW, token)).toEqual({
+  it("rejects an unknown table", async () => {
+    expect(await checkIn(layout, createMemoryStore(), "T99", NOW, token)).toEqual({
       ok: false,
       code: "TABLE_NOT_FOUND",
     });
@@ -102,45 +102,45 @@ describe("C2 checkIn", () => {
 });
 
 describe("C2 checkOut", () => {
-  it("S2-AC2: checking out with the check-in token makes the table free", () => {
+  it("S2-AC2: checking out with the check-in token makes the table free", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
+    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
 
-    const result = checkOut(layout, store, "T1", "mine", NOW);
+    const result = await checkOut(layout, store, "T1", "mine", NOW);
 
     expect(result).toEqual({ ok: true, table: { id: "T1", row: 0, col: 0, status: "free" } });
-    expect(getTableStatuses(layout, store, NOW).tables[0].status).toBe("free");
+    expect((await getTableStatuses(layout, store, NOW)).tables[0].status).toBe("free");
   });
 
-  it("security: a wrong token cannot free someone else's table", () => {
+  it("security: a wrong token cannot free someone else's table", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
+    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
 
-    const result = checkOut(layout, store, "T1", "not-mine", NOW);
+    const result = await checkOut(layout, store, "T1", "not-mine", NOW);
 
     expect(result).toEqual({ ok: false, code: "INVALID_TOKEN" });
-    expect(getTableStatuses(layout, store, NOW).tables[0].status).toBe("occupied");
+    expect((await getTableStatuses(layout, store, NOW)).tables[0].status).toBe("occupied");
   });
 
-  it("rejects a check-out at a free table", () => {
-    expect(checkOut(layout, createMemoryStore(), "T1", "any", NOW)).toEqual({
+  it("rejects a check-out at a free table", async () => {
+    expect(await checkOut(layout, createMemoryStore(), "T1", "any", NOW)).toEqual({
       ok: false,
       code: "TABLE_NOT_OCCUPIED",
     });
   });
 
-  it("R2: rejects a check-out after the check-in expired, even with the right token", () => {
+  it("R2: rejects a check-out after the check-in expired, even with the right token", async () => {
     const store = createMemoryStore();
-    store.set("T1", { token: "mine", checkedInAt: minutesAgo(60) });
+    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(60) });
 
-    expect(checkOut(layout, store, "T1", "mine", NOW)).toEqual({
+    expect(await checkOut(layout, store, "T1", "mine", NOW)).toEqual({
       ok: false,
       code: "TABLE_NOT_OCCUPIED",
     });
   });
 
-  it("rejects an unknown table", () => {
-    expect(checkOut(layout, createMemoryStore(), "T99", "any", NOW)).toEqual({
+  it("rejects an unknown table", async () => {
+    expect(await checkOut(layout, createMemoryStore(), "T99", "any", NOW)).toEqual({
       ok: false,
       code: "TABLE_NOT_FOUND",
     });
