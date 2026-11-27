@@ -4,7 +4,7 @@
 // statuses, "no free table" and error messages all come from the response.
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import type { CheckInResponse, ErrorBody, TablesResponse } from "@/lib/types";
+import type { CheckInResponse, CompanyResponse, ErrorBody, Table, TablesResponse } from "@/lib/types";
 import styles from "./page.module.css";
 
 const GENERIC_ERROR = "Something went wrong, please retry.";
@@ -146,6 +146,19 @@ export default function Home() {
     return `Table ${tableId} is free again. Thank you!`;
   }
 
+  /** S3: show, or stop showing, that I am open to company at my table. */
+  async function setCompany(open: boolean): Promise<string> {
+    if (!mine) throw new Error(GENERIC_ERROR);
+    await request<CompanyResponse>(`/api/tables/${mine.tableId}/company`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ checkinToken: mine.token, open }),
+    });
+    return open
+      ? `Others now see ${mine.tableId} as open to company.`
+      : `${mine.tableId} is no longer shown as open to company.`;
+  }
+
   async function run(action: (tableId: string) => Promise<string>, tableId: string | null) {
     if (!tableId) return;
     setBusy(true);
@@ -165,6 +178,8 @@ export default function Home() {
 
   const cols = data ? Math.max(...data.tables.map((t) => t.col)) + 1 : 1;
   const alreadyCheckedIn = mine !== null && mine.tableId !== selectedId;
+  const myTableOnMap = mine ? data?.tables.find((t) => t.id === mine.tableId) : undefined;
+  const label = (t: Table) => (t.openToCompany ? "occupied, open to company" : t.status);
 
   return (
     <main className={styles.main}>
@@ -180,6 +195,21 @@ export default function Home() {
           <button type="button" disabled={busy} onClick={() => run(checkOut, mine.tableId)}>
             I&apos;m leaving {mine.tableId}
           </button>
+          <label className={styles.company}>
+            <input
+              type="checkbox"
+              checked={myTableOnMap?.openToCompany === true}
+              disabled={busy || !myTableOnMap}
+              onChange={(e) => {
+                const open = e.target.checked;
+                run(() => setCompany(open), mine.tableId);
+              }}
+            />
+            Show that I&apos;m open to company
+          </label>
+          <p className={styles.hint}>
+            Off by default. Others only see the table, never your name, and it ends when you leave.
+          </p>
         </section>
       )}
 
@@ -203,13 +233,13 @@ export default function Home() {
             <button
               key={t.id}
               type="button"
-              className={`${styles.table} ${styles[t.status]} ${t.id === selectedId ? styles.selected : ""}`}
+              className={`${styles.table} ${styles[t.status]} ${t.openToCompany ? styles.open : ""} ${t.id === selectedId ? styles.selected : ""}`}
               style={{ gridRow: t.row + 1, gridColumn: t.col + 1 }}
               aria-pressed={t.id === selectedId}
               onClick={() => setPickedId(t.id)}
             >
               <span className={styles.tableId}>{t.id}</span>
-              <span>{t.status}</span>
+              <span>{label(t)}</span>
               {t.id === mine?.tableId && <span className={styles.yours}>yours</span>}
             </button>
           ))}

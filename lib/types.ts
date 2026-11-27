@@ -12,6 +12,8 @@ export interface LayoutTable {
 /** Table representation returned by the API. */
 export interface Table extends LayoutTable {
   status: TableStatus;
+  /** S3: present (true) only on an occupied table whose student is open to company. */
+  openToCompany?: true;
 }
 
 /** Result of GET /api/tables. */
@@ -33,6 +35,11 @@ export interface CheckInResponse {
   table: Table;
   checkinToken: string;
   expiresAt: string;
+}
+
+/** Body of POST /api/tables/{id}/company, status 200. */
+export interface CompanyResponse {
+  table: Table;
 }
 
 /** Body of POST /api/tables/{id}/checkout, status 200. */

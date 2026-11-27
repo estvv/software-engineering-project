@@ -102,3 +102,28 @@ Saved in the team repository as `docs/M2_story_slice.md` (branch `docs/m2-requir
 
 **AI use**
 Used. See AI_USAGE.md, entry 2 (2026-09-29): Claude drafted this document from our M1 worksheet and the Week 4 lab guide. The team's checks and changes are recorded there.
+
+---
+
+## 6. S3 — "Open to company" (added 2026-11-27, Week 13)
+
+**Status:** acceptance criteria **proposed by Claude Code, to be agreed by the team**. Implemented so that it is ready for the final demo; whether it is shown at the demo still depends on P1 (midterm report section 7: "only if P1 supports it").
+
+**As a** student eating alone, **I want** to show that I am open to company at my table, **so that** another student can join me without me approaching a stranger.
+
+**S3-AC1**
+Given the student is checked in at T1,
+when the student turns on "Show that I'm open to company",
+then T1 is displayed as "occupied, open to company" on the map, for other students within 10 s.
+
+**S3-AC2**
+Given T1 is shown as open to company,
+when the student checks out or the check-in expires (R2),
+then T1 is no longer shown as open to company, and the next check-in at T1 starts with it off.
+
+**S3-AC3 (privacy, midterm report section 6)**
+"Open to company" is off at each new check-in, only the student holding the check-in token can change it, and the map shows no name, photo or other personal data.
+
+**Priority and dependency**
+Priority 3. Depends on S1 (the map) and S2 (the check-in and its token). The privacy risk (a public map showing that someone eats alone at a given table) is limited by S3-AC3; it is reviewed in [Security_review.md](Security_review.md).
+

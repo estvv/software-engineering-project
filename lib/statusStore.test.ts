@@ -77,4 +77,26 @@ describe.each(stores)("C4 %s store", (name, make) => {
     const winner = results.indexOf(true);
     expect((await store.get(ID))?.token).toBe(`t${winner}`);
   });
+
+  it("S3: setOpen needs the right token and an active check-in", async () => {
+    await store.set(ID, { token: "mine", checkedInAt: minutesAgo(5) });
+    expect(await store.setOpen(ID, "not-mine", true, HOUR_AGO)).toBe(false);
+    expect((await store.get(ID))?.openToCompany).toBeUndefined();
+
+    expect(await store.setOpen(ID, "mine", true, HOUR_AGO)).toBe(true);
+    expect((await store.get(ID))?.openToCompany).toBe(true);
+
+    expect(await store.setOpen(ID, "mine", false, HOUR_AGO)).toBe(true);
+    expect((await store.get(ID))?.openToCompany).toBeUndefined();
+
+    await store.set(ID, { token: "mine", checkedInAt: HOUR_AGO });
+    expect(await store.setOpen(ID, "mine", true, HOUR_AGO)).toBe(false);
+  });
+
+  it("S3: a new check-in after an expired one starts closed to company", async () => {
+    await store.set(ID, { token: "old", checkedInAt: HOUR_AGO, openToCompany: true });
+
+    expect(await store.claim(ID, { token: "new", checkedInAt: NOW, openToCompany: true }, HOUR_AGO)).toBe(true);
+    expect((await store.get(ID))?.openToCompany).toBeUndefined();
+  });
 });

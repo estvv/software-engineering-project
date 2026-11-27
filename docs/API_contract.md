@@ -114,6 +114,32 @@ Used by S2-AC2.
 | 403 | `INVALID_TOKEN` | The table is occupied, but the token is not the one returned by its check-in |
 | 500 | `INTERNAL_ERROR` | Unexpected failure |
 
+### 2.4 `POST /api/tables/{id}/company` — "Show that I'm open to company" (S3, added Week 13)
+
+Used by S3. Idempotent: sending the same value twice gives the same result.
+
+**Input:** `id` in the path, and this body:
+
+```json
+{ "checkinToken": "6f1c2b9e-4a7d-4c1e-9b0a-2d5e8f3a7c10", "open": true }
+```
+
+**Result:** `200 OK`
+
+```json
+{ "table": { "id": "T1", "row": 0, "col": 0, "status": "occupied", "openToCompany": true } }
+```
+
+`openToCompany` is an optional field of the table representation: `GET /api/tables` includes `"openToCompany": true` only on an occupied table whose student turned it on. It is absent otherwise, so C1 versions that ignore it keep working. A new check-in always starts with it off (S3-AC3).
+
+**Errors:** the same as `checkout`, in the same order: `404 TABLE_NOT_FOUND`, `400 INVALID_BODY` (also when `open` is not a boolean), `409 TABLE_NOT_OCCUPIED`, `403 INVALID_TOKEN`, `500 INTERNAL_ERROR`.
+
+### 2.5 `GET /api/health` — health check (added Week 13)
+
+Not used by C1. For the Docker healthcheck and the operator ([Maintenance.md](Maintenance.md)).
+
+**Result:** `200 OK` with `{ "status": "ok", "store": "postgres" }` (or `"memory"`), or `503` with `{ "status": "unavailable", "store": "postgres" }` when the database cannot be reached.
+
 ---
 
 ## 3. Traceability
@@ -127,6 +153,7 @@ Used by S2-AC2.
 | R1 | `checkin` on an occupied table → `409 TABLE_OCCUPIED` | Route test |
 | R2 | Status is `"free"` once `expiresAt` has passed | Unit test on C2 with a fixed clock |
 | Security (Step 3) | `checkout` with a wrong token → `403 INVALID_TOKEN` | Route test |
+| S3-AC1, S3-AC2, S3-AC3 | `company` with the token → `200`, `openToCompany` on the map; gone after check-out; `403` with another token | Route tests in `app/api/tables/[id]/company.test.ts` |
 
 All checks above have been run. Unit tests: `lib/seatStatus.test.ts`; route tests: `app/api/tables/route.test.ts` and `app/api/tables/[id]/checkin-checkout.test.ts` (28/28, re-run by Esteve on 2026-10-15, commit `d786cca`). Manual API check: [evidence](evidence/2026-10-15_api_manual_check.md), 6/6. Screenshots of the map: [UI check](evidence/2026-10-17_c1_ui_check.md).
 
@@ -149,7 +176,8 @@ All checks above have been run. Unit tests: `lib/seatStatus.test.ts`; route test
 
 - **Lost check-in response.** If the `checkin` response is lost (timeout), the table may be occupied but C1 has no token. A retry then gets `409`. The student cannot check out and the table frees itself after 60 minutes (R2). We accept this for v1.
 - **Token stored in the browser.** Clearing the browser or changing phone loses the token, with the same result as above.
-- **No accounts.** The API stores no name, student ID or IP address with a check-in, only the table, the token and the time (data minimization, Week 7). The flip side is that nothing stops one person from checking in at several tables. Not handled in v1 (backlog X2).
+- **No accounts.** The API stores no name, student ID or IP address with a check-in, only the table, the hash of the token, the time and the S3 flag (data minimization, Week 7). The flip side is that the server cannot stop one person from checking in at several tables. Since Week 13, C1 blocks a second check-in from the same browser (#32); a student using two browsers is not stopped. Decision in [Security_review.md](Security_review.md).
+- **Token hashing.** Since Week 13, C2 stores the SHA-256 of the token, never the token itself. The contract did not change.
 - **Store.** Since Week 12, C4 keeps check-ins in PostgreSQL when `DATABASE_URL` is set (Docker deployment), so a restart no longer frees every table (issue #35). Without `DATABASE_URL` (tests, `npm run dev`), C4 falls back to memory and logs a warning. The contract did not change.
 - **Layout.** [`data/layout.json`](../data/layout.json) is a temporary 3 × 4 grid (T1–T12), not the real cafeteria. It will be replaced after the team's sketch (P2). The contract does not change: only the table IDs and positions do.
 - **Why POST on the table and not `DELETE /checkins/{id}`.** The two actions match the two buttons in S2 and keep C1 simple. A check-in resource with its own URI can be reconsidered if checking in at several tables or tracking seats is ever needed.

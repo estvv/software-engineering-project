@@ -53,6 +53,12 @@
   color: #7a1010;
 }
 
+/* S3: occupied, and the student is open to company. Shown by text too, not only color. */
+.open {
+  background: #fde7b0;
+  color: #5c3b00;
+}
+
 .selected {
   border-color: currentColor;
 }
@@ -90,6 +96,24 @@
 .mine button:focus-visible {
   outline: 3px solid #1a5fd0;
   outline-offset: 3px;
+}
+
+.company {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-basis: 100%;
+  cursor: pointer;
+}
+
+.company input {
+  width: 20px;
+  height: 20px;
+}
+
+.company input:focus-visible {
+  outline: 3px solid #1a5fd0;
+  outline-offset: 2px;
 }
 
 .hint {

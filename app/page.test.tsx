@@ -216,3 +216,48 @@ describe("C1 map display (S1)", () => {
     expect((await screen.findByRole("alert")).textContent).toBe("Something went wrong, please retry.");
   });
 });
+
+describe("C1 open to company (S3)", () => {
+  const MINE_KEY = "seattogether.myCheckin";
+
+  beforeEach(() => {
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("S3-AC1: shows a table that is open to company with a text label", async () => {
+    fetchMock.mockImplementation(async () =>
+      json({ tables: [{ id: "T1", row: 0, col: 0, status: "occupied", openToCompany: true }], noFreeTable: true }),
+    );
+    render(<Home />);
+
+    expect((await screen.findByRole("button", { name: /^T1/ })).textContent).toBe("T1occupied, open to company");
+  });
+
+  it("S3-AC3: the toggle is off by default and sends my token when turned on", async () => {
+    localStorage.setItem(
+      MINE_KEY,
+      JSON.stringify({ tableId: "T1", token: "tok", expiresAt: new Date(Date.now() + 3_600_000).toISOString() }),
+    );
+    fetchMock.mockImplementation(async (_url, init) =>
+      init?.method === "POST" ? json({ table: {} }) : json(tables("occupied")),
+    );
+    render(<Home />);
+    await screen.findByRole("button", { name: /^T1/ });
+    const toggle = screen.getByRole("checkbox", { name: "Show that I'm open to company" }) as HTMLInputElement;
+    expect(toggle.checked).toBe(false);
+
+    fireEvent.click(toggle);
+
+    await screen.findByText("Others now see T1 as open to company.");
+    const [url, init] = fetchMock.mock.calls.find(([, i]) => i?.method === "POST")!;
+    expect(url).toBe("/api/tables/T1/company");
+    expect(JSON.parse(init!.body as string)).toEqual({ checkinToken: "tok", open: true });
+  });
+});

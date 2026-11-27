@@ -17,6 +17,14 @@ function statusOf(checkIn: CheckIn | undefined, now: Date): TableStatus {
   return checkIn && checkIn.checkedInAt.getTime() > activeSince(now).getTime() ? "occupied" : "free";
 }
 
+/** API view of one table. "Open to company" (S3) only shows on an occupied table. */
+function toTable(table: LayoutTable, checkIn: CheckIn | undefined, now: Date): Table {
+  const status = statusOf(checkIn, now);
+  return status === "occupied" && checkIn?.openToCompany
+    ? { ...table, status, openToCompany: true }
+    : { ...table, status };
+}
+
 /** Statuses of every table, plus the "no free table" indication (S1-AC1, S1-AC2). */
 export async function getTableStatuses(
   layout: LayoutTable[],
@@ -25,7 +33,7 @@ export async function getTableStatuses(
 ): Promise<TablesResponse> {
   const checkIns = await store.getAll();
   const tables: Table[] = layout
-    .map((t) => ({ ...t, status: statusOf(checkIns.get(t.id), now) }))
+    .map((t) => toTable(t, checkIns.get(t.id), now))
     .sort((a, b) => a.id.localeCompare(b.id, "en", { numeric: true }));
   return {
     tables,
@@ -95,9 +103,43 @@ export async function checkOut(
     return { ok: true, table: { ...table, status: "free" } };
   }
 
-  // Not released: find out why, to return the error of the contract.
+  return { ok: false, code: await whyRefused(store, tableId, now) };
+}
+
+/** After a refused token action: the error of the contract (403 or 409). */
+async function whyRefused(
+  store: StatusStore,
+  tableId: string,
+  now: Date,
+): Promise<"TABLE_NOT_OCCUPIED" | "INVALID_TOKEN"> {
   const current = await store.get(tableId);
-  if (statusOf(current, now) === "occupied") return { ok: false, code: "INVALID_TOKEN" };
+  if (statusOf(current, now) === "occupied") return "INVALID_TOKEN";
   if (current) await store.delete(tableId); // drop an expired check-in
-  return { ok: false, code: "TABLE_NOT_OCCUPIED" };
+  return "TABLE_NOT_OCCUPIED";
+}
+
+export type CompanyResult = CheckOutResult;
+
+/**
+ * S3 "open to company": the student at the table shows, or stops showing, that
+ * they are open to company. Same token check as check-out. Privacy (midterm
+ * report section 6): opt-in, off at each new check-in, no name, ends with the check-in.
+ */
+export async function setOpenToCompany(
+  layout: LayoutTable[],
+  store: StatusStore,
+  tableId: string,
+  token: string,
+  open: boolean,
+  now: Date,
+): Promise<CompanyResult> {
+  const table = findTable(layout, tableId);
+  if (!table) return { ok: false, code: "TABLE_NOT_FOUND" };
+  if (await store.setOpen(tableId, hashToken(token), open, activeSince(now))) {
+    return {
+      ok: true,
+      table: open ? { ...table, status: "occupied", openToCompany: true } : { ...table, status: "occupied" },
+    };
+  }
+  return { ok: false, code: await whyRefused(store, tableId, now) };
 }

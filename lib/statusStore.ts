@@ -9,6 +9,8 @@ export interface CheckIn {
   /** SHA-256 of the check-in token: C2 hashes it before calling the store. */
   token: string;
   checkedInAt: Date;
+  /** S3: the student shows that they are open to company. Off by default. */
+  openToCompany?: boolean;
 }
 
 /**
@@ -27,6 +29,11 @@ export interface StatusStore {
   claim(tableId: string, checkIn: CheckIn, activeSince: Date): Promise<boolean>;
   /** Deletes the table's active check-in if the token matches. True if deleted. */
   release(tableId: string, token: string, activeSince: Date): Promise<boolean>;
+  /**
+   * S3: sets "open to company" on the table's active check-in if the token
+   * matches. True if changed. A new check-in always starts with it off.
+   */
+  setOpen(tableId: string, token: string, open: boolean, activeSince: Date): Promise<boolean>;
   /** Overwrites the check-in, without any rule. Used to prepare tests. */
   set(tableId: string, checkIn: CheckIn): Promise<void>;
   delete(tableId: string): Promise<void>;
@@ -44,13 +51,20 @@ export function createMemoryStore(): StatusStore {
     getAll: async () => new Map(checkIns),
     claim: async (tableId, checkIn, activeSince) => {
       if (isActive(checkIns.get(tableId), activeSince)) return false;
-      checkIns.set(tableId, checkIn);
+      checkIns.set(tableId, { token: checkIn.token, checkedInAt: checkIn.checkedInAt });
       return true;
     },
     release: async (tableId, token, activeSince) => {
       const current = checkIns.get(tableId);
       if (!isActive(current, activeSince) || current.token !== token) return false;
       checkIns.delete(tableId);
+      return true;
+    },
+    setOpen: async (tableId, token, open, activeSince) => {
+      const current = checkIns.get(tableId);
+      if (!isActive(current, activeSince) || current.token !== token) return false;
+      const { token: t, checkedInAt } = current;
+      checkIns.set(tableId, open ? { token: t, checkedInAt, openToCompany: true } : { token: t, checkedInAt });
       return true;
     },
     set: async (tableId, checkIn) => {
@@ -69,17 +83,22 @@ const SCHEMA = `
     table_id      text        PRIMARY KEY,
     token         text        NOT NULL,
     checked_in_at timestamptz NOT NULL
-  )`;
+  );
+  ALTER TABLE checkins ADD COLUMN IF NOT EXISTS open_to_company boolean NOT NULL DEFAULT false`;
 
 interface CheckInRow {
   table_id: string;
   token: string;
   checked_in_at: Date;
+  open_to_company: boolean;
 }
+
+const COLUMNS = "table_id, token, checked_in_at, open_to_company";
 
 const toCheckIn = (row: CheckInRow): CheckIn => ({
   token: row.token,
   checkedInAt: row.checked_in_at,
+  ...(row.open_to_company ? { openToCompany: true } : {}),
 });
 
 export function createPostgresStore(pool: Pool): StatusStore {
@@ -118,22 +137,22 @@ export function createPostgresStore(pool: Pool): StatusStore {
     },
     get: async (tableId) => {
       const { rows } = await query<CheckInRow>(
-        "SELECT table_id, token, checked_in_at FROM checkins WHERE table_id = $1",
+        `SELECT ${COLUMNS} FROM checkins WHERE table_id = $1`,
         [tableId],
       );
       return rows[0] ? toCheckIn(rows[0]) : undefined;
     },
     getAll: async () => {
-      const { rows } = await query<CheckInRow>("SELECT table_id, token, checked_in_at FROM checkins");
+      const { rows } = await query<CheckInRow>(`SELECT ${COLUMNS} FROM checkins`);
       return new Map(rows.map((r) => [r.table_id, toCheckIn(r)]));
     },
     claim: async (tableId, checkIn, activeSince) => {
       // One statement: PostgreSQL locks the row, so a concurrent claim waits,
       // then sees the new check-in as active and does nothing.
       const { rowCount } = await query(
-        `INSERT INTO checkins (table_id, token, checked_in_at) VALUES ($1, $2, $3)
+        `INSERT INTO checkins (table_id, token, checked_in_at, open_to_company) VALUES ($1, $2, $3, false)
          ON CONFLICT (table_id) DO UPDATE
-           SET token = EXCLUDED.token, checked_in_at = EXCLUDED.checked_in_at
+           SET token = EXCLUDED.token, checked_in_at = EXCLUDED.checked_in_at, open_to_company = false
            WHERE checkins.checked_in_at <= $4`,
         [tableId, checkIn.token, checkIn.checkedInAt, activeSince],
       );
@@ -146,12 +165,20 @@ export function createPostgresStore(pool: Pool): StatusStore {
       );
       return rowCount === 1;
     },
+    setOpen: async (tableId, token, open, activeSince) => {
+      const { rowCount } = await query(
+        "UPDATE checkins SET open_to_company = $4 WHERE table_id = $1 AND token = $2 AND checked_in_at > $3",
+        [tableId, token, activeSince, open],
+      );
+      return rowCount === 1;
+    },
     set: async (tableId, checkIn) => {
       await query(
-        `INSERT INTO checkins (table_id, token, checked_in_at) VALUES ($1, $2, $3)
+        `INSERT INTO checkins (table_id, token, checked_in_at, open_to_company) VALUES ($1, $2, $3, $4)
          ON CONFLICT (table_id) DO UPDATE
-           SET token = EXCLUDED.token, checked_in_at = EXCLUDED.checked_in_at`,
-        [tableId, checkIn.token, checkIn.checkedInAt],
+           SET token = EXCLUDED.token, checked_in_at = EXCLUDED.checked_in_at,
+               open_to_company = EXCLUDED.open_to_company`,
+        [tableId, checkIn.token, checkIn.checkedInAt, checkIn.openToCompany ?? false],
       );
     },
     delete: async (tableId) => {

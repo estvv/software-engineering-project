@@ -2,6 +2,7 @@
 
 import { errorResponse, noStore } from "@/lib/apiErrors";
 import { logError, logEvent } from "@/lib/log";
+import { readJsonObject } from "@/lib/requestBody";
 import { getLayout } from "@/lib/layout";
 import { checkOut, tableExists } from "@/lib/seatStatus";
 import { getStatusStore } from "@/lib/statusStore";
@@ -9,14 +10,8 @@ import type { CheckOutResponse } from "@/lib/types";
 
 /** Reads `checkinToken` from the JSON body, or null if the body is invalid. */
 async function readToken(request: Request): Promise<string | null> {
-  try {
-    const body: unknown = await request.json();
-    if (typeof body !== "object" || body === null) return null;
-    const token = (body as { checkinToken?: unknown }).checkinToken;
-    return typeof token === "string" ? token : null;
-  } catch {
-    return null;
-  }
+  const token = (await readJsonObject(request))?.checkinToken;
+  return typeof token === "string" ? token : null;
 }
 
 export async function POST(
