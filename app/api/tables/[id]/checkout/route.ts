@@ -1,6 +1,7 @@
 // POST /api/tables/{id}/checkout (docs/API_contract.md, section 2.3).
 
 import { errorResponse, noStore } from "@/lib/apiErrors";
+import { logError, logEvent } from "@/lib/log";
 import { getLayout } from "@/lib/layout";
 import { checkOut, tableExists } from "@/lib/seatStatus";
 import { getStatusStore } from "@/lib/statusStore";
@@ -31,13 +32,13 @@ export async function POST(
     if (token === null) return errorResponse("INVALID_BODY");
 
     const result = await checkOut(layout, getStatusStore(), id, token, new Date());
+    logEvent("checkout", { table: id, result: result.ok ? "ok" : result.code });
     if (!result.ok) return errorResponse(result.code);
 
     const body: CheckOutResponse = { table: result.table };
     return Response.json(body, { headers: noStore });
   } catch (error) {
-    // Logged for the operator (e.g. database down); the student sees a generic message.
-    console.error("[C2] POST checkout failed:", error);
+    logError("checkout.failed", error);
     return errorResponse("INTERNAL_ERROR");
   }
 }

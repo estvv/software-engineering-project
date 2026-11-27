@@ -1,6 +1,7 @@
 // GET /api/tables (docs/API_contract.md, section 2.1).
 
 import { errorResponse, noStore } from "@/lib/apiErrors";
+import { logError } from "@/lib/log";
 import { getLayout } from "@/lib/layout";
 import { getTableStatuses } from "@/lib/seatStatus";
 import { getStatusStore } from "@/lib/statusStore";
@@ -13,8 +14,8 @@ export async function GET(): Promise<Response> {
     const body = await getTableStatuses(getLayout(), getStatusStore(), new Date());
     return Response.json(body, { headers: noStore });
   } catch (error) {
-    // Logged for the operator (e.g. database down); the student sees a generic message.
-    console.error("[C2] GET /api/tables failed:", error);
+    // Not logged on success: the map polls every 5 s per open page.
+    logError("tables.failed", error);
     return errorResponse("INTERNAL_ERROR");
   }
 }

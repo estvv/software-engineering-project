@@ -2,6 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import { errorResponse, noStore } from "@/lib/apiErrors";
+import { logError, logEvent } from "@/lib/log";
 import { getLayout } from "@/lib/layout";
 import { checkIn } from "@/lib/seatStatus";
 import { getStatusStore } from "@/lib/statusStore";
@@ -14,6 +15,7 @@ export async function POST(
   try {
     const { id } = await params;
     const result = await checkIn(getLayout(), getStatusStore(), id, new Date(), randomUUID);
+    logEvent("checkin", { table: id, result: result.ok ? "ok" : result.code });
     if (!result.ok) return errorResponse(result.code);
 
     const body: CheckInResponse = {
@@ -23,8 +25,7 @@ export async function POST(
     };
     return Response.json(body, { status: 201, headers: noStore });
   } catch (error) {
-    // Logged for the operator (e.g. database down); the student sees a generic message.
-    console.error("[C2] POST checkin failed:", error);
+    logError("checkin.failed", error);
     return errorResponse("INTERNAL_ERROR");
   }
 }

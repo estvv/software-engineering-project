@@ -3,8 +3,10 @@
 // (issue #35). Without it, they are kept in memory (tests, quick local runs).
 
 import { Pool } from "pg";
+import { logEvent } from "./log";
 
 export interface CheckIn {
+  /** SHA-256 of the check-in token: C2 hashes it before calling the store. */
   token: string;
   checkedInAt: Date;
 }
@@ -16,6 +18,9 @@ export interface CheckIn {
  * cannot both get the same table (rule R1).
  */
 export interface StatusStore {
+  readonly kind: "memory" | "postgres";
+  /** Throws if the store cannot be reached (used by /api/health). */
+  ping(): Promise<void>;
   get(tableId: string): Promise<CheckIn | undefined>;
   getAll(): Promise<Map<string, CheckIn>>;
   /** Saves the check-in unless the table has an active one. True if saved. */
@@ -33,6 +38,8 @@ const isActive = (c: CheckIn | undefined, activeSince: Date): c is CheckIn =>
 export function createMemoryStore(): StatusStore {
   const checkIns = new Map<string, CheckIn>();
   return {
+    kind: "memory",
+    ping: async () => {},
     get: async (tableId) => checkIns.get(tableId),
     getAll: async () => new Map(checkIns),
     claim: async (tableId, checkIn, activeSince) => {
@@ -105,6 +112,10 @@ export function createPostgresStore(pool: Pool): StatusStore {
   }
 
   return {
+    kind: "postgres",
+    ping: async () => {
+      await query("SELECT 1");
+    },
     get: async (tableId) => {
       const { rows } = await query<CheckInRow>(
         "SELECT table_id, token, checked_in_at FROM checkins WHERE table_id = $1",
@@ -160,7 +171,9 @@ export function getStatusStore(): StatusStore {
   if (url) {
     globalForStore.statusStore = createPostgresStore(new Pool({ connectionString: url, max: 10 }));
   } else {
-    console.warn("[C4] DATABASE_URL is not set: check-ins are kept in memory and lost on restart.");
+    logEvent("store.memory_fallback", {
+      warning: "DATABASE_URL is not set: check-ins are kept in memory and lost on restart.",
+    });
     globalForStore.statusStore = createMemoryStore();
   }
   return globalForStore.statusStore;

@@ -31,6 +31,10 @@ echo "== docker compose up ($COMPOSE_PROJECT_NAME, port $APP_PORT)"
 docker compose up -d $BUILD_FLAG --wait
 wait_ready
 
+echo "== health and security headers"
+check "/api/health reports the PostgreSQL store" '"store":"postgres"' "$(curl -s "http://localhost:$APP_PORT/api/health" | grep -o '"store":"[a-z]*"')"
+check "page is not frameable (X-Frame-Options)" DENY "$(curl -sI "http://localhost:$APP_PORT/" | tr -d '\r' | awk -F': ' 'tolower($1)=="x-frame-options"{print $2}')"
+
 echo "== check-in at T1"
 out=$(curl -s -w '\n%{http_code}' -X POST "$BASE/T1/checkin")
 check "check-in returns 201" 201 "$(tail -n1 <<<"$out")"
@@ -47,6 +51,11 @@ code=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: applicat
   -d "{\"checkinToken\":\"$token\"}" "$BASE/T1/checkout")
 check "check-out returns 200" 200 "$code"
 check "T1 is free" free "$(status_of T1)"
+
+echo "== logs"
+logs=$(docker compose logs app 2>&1)
+check "check-in and check-out are logged" 2 "$(grep -cE '"event":"check(in|out)","table":"T1","result":"ok"' <<<"$logs")"
+check "the token never appears in the logs" 0 "$(grep -c "$token" <<<"$logs")"
 
 echo
 echo "$pass passed, $fail failed"

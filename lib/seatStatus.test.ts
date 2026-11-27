@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CHECKIN_DURATION_MS, checkIn, checkOut, getTableStatuses } from "./seatStatus";
 import { createMemoryStore } from "./statusStore";
+import { hashToken } from "./token";
 import type { LayoutTable } from "./types";
 
 const NOW = new Date("2026-10-20T12:15:00Z");
@@ -90,7 +91,7 @@ describe("C2 checkIn", () => {
     const result = await checkIn(layout, store, "T1", NOW, token);
 
     expect(result.ok).toBe(true);
-    expect((await store.get("T1"))?.token).toBe("new-token");
+    expect((await store.get("T1"))?.token).toBe(hashToken("new-token"));
   });
 
   it("rejects an unknown table", async () => {
@@ -104,7 +105,7 @@ describe("C2 checkIn", () => {
 describe("C2 checkOut", () => {
   it("S2-AC2: checking out with the check-in token makes the table free", async () => {
     const store = createMemoryStore();
-    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
+    await store.set("T1", { token: hashToken("mine"), checkedInAt: minutesAgo(5) });
 
     const result = await checkOut(layout, store, "T1", "mine", NOW);
 
@@ -114,7 +115,7 @@ describe("C2 checkOut", () => {
 
   it("security: a wrong token cannot free someone else's table", async () => {
     const store = createMemoryStore();
-    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(5) });
+    await store.set("T1", { token: hashToken("mine"), checkedInAt: minutesAgo(5) });
 
     const result = await checkOut(layout, store, "T1", "not-mine", NOW);
 
@@ -131,7 +132,7 @@ describe("C2 checkOut", () => {
 
   it("R2: rejects a check-out after the check-in expired, even with the right token", async () => {
     const store = createMemoryStore();
-    await store.set("T1", { token: "mine", checkedInAt: minutesAgo(60) });
+    await store.set("T1", { token: hashToken("mine"), checkedInAt: minutesAgo(60) });
 
     expect(await checkOut(layout, store, "T1", "mine", NOW)).toEqual({
       ok: false,
@@ -144,5 +145,26 @@ describe("C2 checkOut", () => {
       ok: false,
       code: "TABLE_NOT_FOUND",
     });
+  });
+});
+
+describe("C2 token storage (security review)", () => {
+  it("stores only the hash of the check-in token", async () => {
+    const store = createMemoryStore();
+
+    const result = await checkIn(layout, store, "T1", NOW, () => "secret-token");
+
+    expect(result.ok && result.checkinToken).toBe("secret-token");
+    const stored = (await store.get("T1"))?.token;
+    expect(stored).not.toBe("secret-token");
+    expect(stored).toMatch(/^[0-9a-f]{64}$/);
+  });
+
+  it("the stored hash itself cannot free the table", async () => {
+    const store = createMemoryStore();
+    await checkIn(layout, store, "T1", NOW, () => "secret-token");
+    const stored = (await store.get("T1"))!.token;
+
+    expect(await checkOut(layout, store, "T1", stored, NOW)).toEqual({ ok: false, code: "INVALID_TOKEN" });
   });
 });

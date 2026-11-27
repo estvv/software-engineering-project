@@ -2,6 +2,7 @@
 // C1 never applies these rules itself; it only displays the result.
 
 import type { CheckIn, StatusStore } from "./statusStore";
+import { hashToken } from "./token";
 import type { LayoutTable, Table, TableStatus, TablesResponse } from "./types";
 
 /** Rule R2: a check-in is valid for 60 minutes. */
@@ -57,9 +58,13 @@ export async function checkIn(
   if (!table) return { ok: false, code: "TABLE_NOT_FOUND" };
 
   // The store replaces an expired check-in (R2) and refuses an active one (R1),
-  // in one atomic step.
+  // in one atomic step. Only the hash of the token is stored.
   const checkinToken = newToken();
-  const claimed = await store.claim(tableId, { token: checkinToken, checkedInAt: now }, activeSince(now));
+  const claimed = await store.claim(
+    tableId,
+    { token: hashToken(checkinToken), checkedInAt: now },
+    activeSince(now),
+  );
   if (!claimed) return { ok: false, code: "TABLE_OCCUPIED" };
   return {
     ok: true,
@@ -86,7 +91,7 @@ export async function checkOut(
 ): Promise<CheckOutResult> {
   const table = findTable(layout, tableId);
   if (!table) return { ok: false, code: "TABLE_NOT_FOUND" };
-  if (await store.release(tableId, token, activeSince(now))) {
+  if (await store.release(tableId, hashToken(token), activeSince(now))) {
     return { ok: true, table: { ...table, status: "free" } };
   }
 
