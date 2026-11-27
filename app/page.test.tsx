@@ -131,6 +131,7 @@ describe("C1 my check-in (#34, #32)", () => {
     render(<Home />);
 
     expect(await screen.findByText(/Your table:/)).toBeTruthy();
+    await screen.findByRole("button", { name: /^T1/ }); // the map loads after the saved check-in shows
     expect(t1Label()).toContain("yours");
 
     fireEvent.click(screen.getByRole("button", { name: "I'm leaving T1" }));
@@ -157,7 +158,7 @@ describe("C1 my check-in (#34, #32)", () => {
     render(<Home />);
     await screen.findByText(/Your table:/);
 
-    fireEvent.click(screen.getByRole("button", { name: /^T2/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /^T2/ }));
 
     expect((screen.getByRole("button", { name: "I'm sitting here" }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByText(/already checked in at T1/)).toBeTruthy();
@@ -169,5 +170,49 @@ describe("C1 my check-in (#34, #32)", () => {
     render(<Home />);
 
     expect(await screen.findByText(/Your table:/)).toBeTruthy();
+  });
+});
+
+describe("C1 map display (S1)", () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+
+  it("S1-AC1: each table shows its status as text, not only as a color", async () => {
+    fetchMock.mockImplementation(async () => json(tables("occupied")));
+    render(<Home />);
+
+    const t1 = await screen.findByRole("button", { name: /^T1/ });
+    const t2 = screen.getByRole("button", { name: /^T2/ });
+    expect(t1.textContent).toBe("T1occupied");
+    expect(t2.textContent).toBe("T2free");
+    expect(t1.className).not.toBe(t2.className);
+    expect(screen.queryByText("No free table reported right now")).toBeNull();
+  });
+
+  it("S1-AC2: shows the message above the map when no table is free", async () => {
+    fetchMock.mockImplementation(async () =>
+      json({ tables: [{ id: "T1", row: 0, col: 0, status: "occupied" }], noFreeTable: true }),
+    );
+    render(<Home />);
+
+    const message = await screen.findByText("No free table reported right now");
+    const map = screen.getByRole("button", { name: /^T1/ });
+    expect(message.compareDocumentPosition(map) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("shows the API error message when the map cannot be loaded", async () => {
+    fetchMock.mockImplementation(async () =>
+      json({ error: { code: "INTERNAL_ERROR", message: "Something went wrong, please retry." } }, 500),
+    );
+    render(<Home />);
+
+    expect((await screen.findByRole("alert")).textContent).toBe("Something went wrong, please retry.");
   });
 });
