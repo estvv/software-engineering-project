@@ -1,27 +1,30 @@
 // C2 Seat Status Service: decides each table's status (decision D1).
 // C1 never applies these rules itself; it only displays the result.
 
-import type { StatusStore } from "./statusStore";
+import type { CheckIn, StatusStore } from "./statusStore";
 import type { LayoutTable, Table, TableStatus, TablesResponse } from "./types";
 
 /** Rule R2: a check-in is valid for 60 minutes. */
 export const CHECKIN_DURATION_MS = 60 * 60 * 1000;
 
-function statusOf(tableId: string, store: StatusStore, now: Date): TableStatus {
-  const checkIn = store.get(tableId);
-  if (!checkIn) return "free";
-  const age = now.getTime() - checkIn.checkedInAt.getTime();
-  return age < CHECKIN_DURATION_MS ? "occupied" : "free";
+/** Check-ins made strictly after this moment are still active (rule R2). */
+function activeSince(now: Date): Date {
+  return new Date(now.getTime() - CHECKIN_DURATION_MS);
+}
+
+function statusOf(checkIn: CheckIn | undefined, now: Date): TableStatus {
+  return checkIn && checkIn.checkedInAt.getTime() > activeSince(now).getTime() ? "occupied" : "free";
 }
 
 /** Statuses of every table, plus the "no free table" indication (S1-AC1, S1-AC2). */
-export function getTableStatuses(
+export async function getTableStatuses(
   layout: LayoutTable[],
   store: StatusStore,
   now: Date,
-): TablesResponse {
+): Promise<TablesResponse> {
+  const checkIns = await store.getAll();
   const tables: Table[] = layout
-    .map((t) => ({ ...t, status: statusOf(t.id, store, now) }))
+    .map((t) => ({ ...t, status: statusOf(checkIns.get(t.id), now) }))
     .sort((a, b) => a.id.localeCompare(b.id, "en", { numeric: true }));
   return {
     tables,
@@ -43,20 +46,21 @@ export type CheckInResult =
   | { ok: false; code: "TABLE_NOT_FOUND" | "TABLE_OCCUPIED" };
 
 /** "I'm sitting here" (S2-AC1). Rejects a table that is already occupied (rule R1). */
-export function checkIn(
+export async function checkIn(
   layout: LayoutTable[],
   store: StatusStore,
   tableId: string,
   now: Date,
   newToken: () => string,
-): CheckInResult {
+): Promise<CheckInResult> {
   const table = findTable(layout, tableId);
   if (!table) return { ok: false, code: "TABLE_NOT_FOUND" };
-  if (statusOf(tableId, store, now) === "occupied") return { ok: false, code: "TABLE_OCCUPIED" };
 
-  // An expired check-in (R2) is simply replaced.
+  // The store replaces an expired check-in (R2) and refuses an active one (R1),
+  // in one atomic step.
   const checkinToken = newToken();
-  store.set(tableId, { token: checkinToken, checkedInAt: now });
+  const claimed = await store.claim(tableId, { token: checkinToken, checkedInAt: now }, activeSince(now));
+  if (!claimed) return { ok: false, code: "TABLE_OCCUPIED" };
   return {
     ok: true,
     table: { ...table, status: "occupied" },
@@ -73,21 +77,22 @@ export type CheckOutResult =
  * "I'm leaving" (S2-AC2). Only the token returned by the check-in can free the
  * table, so one student cannot free another student's table.
  */
-export function checkOut(
+export async function checkOut(
   layout: LayoutTable[],
   store: StatusStore,
   tableId: string,
   token: string,
   now: Date,
-): CheckOutResult {
+): Promise<CheckOutResult> {
   const table = findTable(layout, tableId);
   if (!table) return { ok: false, code: "TABLE_NOT_FOUND" };
-  if (statusOf(tableId, store, now) === "free") {
-    store.delete(tableId); // drop an expired check-in, if any
-    return { ok: false, code: "TABLE_NOT_OCCUPIED" };
+  if (await store.release(tableId, token, activeSince(now))) {
+    return { ok: true, table: { ...table, status: "free" } };
   }
-  if (store.get(tableId)?.token !== token) return { ok: false, code: "INVALID_TOKEN" };
 
-  store.delete(tableId);
-  return { ok: true, table: { ...table, status: "free" } };
+  // Not released: find out why, to return the error of the contract.
+  const current = await store.get(tableId);
+  if (statusOf(current, now) === "occupied") return { ok: false, code: "INVALID_TOKEN" };
+  if (current) await store.delete(tableId); // drop an expired check-in
+  return { ok: false, code: "TABLE_NOT_OCCUPIED" };
 }

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { GET } from "@/app/api/tables/route";
 import { getLayout } from "@/lib/layout";
-import { statusStore } from "@/lib/statusStore";
+import { getStatusStore } from "@/lib/statusStore";
 import type { CheckInResponse, ErrorBody, TablesResponse } from "@/lib/types";
 import { POST as checkinPOST } from "./checkin/route";
 import { POST as checkoutPOST } from "./checkout/route";
@@ -18,7 +18,7 @@ const checkout = (id: string, body?: string) => checkoutPOST(post(body), ctx(id)
 const tokenBody = (checkinToken: unknown) => JSON.stringify({ checkinToken });
 
 async function statusOf(id: string) {
-  const body = (await GET().json()) as TablesResponse;
+  const body = (await (await GET()).json()) as TablesResponse;
   return body.tables.find((t) => t.id === id)?.status;
 }
 
@@ -27,8 +27,8 @@ async function errorCode(res: Response) {
 }
 
 describe("POST /api/tables/{id}/checkin and /checkout", () => {
-  beforeEach(() => {
-    for (const t of getLayout()) statusStore.delete(t.id);
+  beforeEach(async () => {
+    for (const t of getLayout()) await getStatusStore().delete(t.id);
   });
 
   it("S2-AC1: check-in returns 201 with a token, and the map shows the table occupied", async () => {

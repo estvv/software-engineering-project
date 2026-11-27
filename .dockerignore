@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+.next
+coverage
+course
+docs
+*.tsbuildinfo
+.env*
+!.env.example
+Dockerfile
+docker-compose.yml

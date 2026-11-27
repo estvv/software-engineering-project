@@ -3,16 +3,18 @@
 import { errorResponse, noStore } from "@/lib/apiErrors";
 import { getLayout } from "@/lib/layout";
 import { getTableStatuses } from "@/lib/seatStatus";
-import { statusStore } from "@/lib/statusStore";
+import { getStatusStore } from "@/lib/statusStore";
 
 // Statuses change during lunch: never prerender or cache this route.
 export const dynamic = "force-dynamic";
 
-export function GET(): Response {
+export async function GET(): Promise<Response> {
   try {
-    const body = getTableStatuses(getLayout(), statusStore, new Date());
+    const body = await getTableStatuses(getLayout(), getStatusStore(), new Date());
     return Response.json(body, { headers: noStore });
-  } catch {
+  } catch (error) {
+    // Logged for the operator (e.g. database down); the student sees a generic message.
+    console.error("[C2] GET /api/tables failed:", error);
     return errorResponse("INTERNAL_ERROR");
   }
 }
