@@ -1,7 +1,7 @@
 # Product Backlog — SeatTogether
 
 **Team:** EPITECH
-**Last updated:** 2026-11-07
+**Last updated:** 2026-11-27
 **Status:** Draft. Order reflects current understanding and will change with evidence (first input: the M1 prototype test).
 
 **Product Goal:** Inha students can find a free cafeteria table at lunch without walking around the room, and students eating alone can signal they are open to company.
@@ -16,13 +16,16 @@ Order considers value, risk, and dependencies. Near-term items are detailed; lat
 | 4 | S2 | Story | Check in / check out of a table | S2-AC1, S2-AC2 in [M2 story slice](M2_story_slice.md). Tests in [Traceability](Traceability.md) | Implemented |
 | 5 | R1 | Rule | Check-in at a table already marked occupied | Decision (2026-10-15): reject the check-in; the table stays occupied and the student sees "Table already occupied". Tables are tracked as a whole, as in M1. Implemented in C2. Proposed by Esteve, approved by Adam on PR #5 (2026-10-15). | Implemented |
 | 6 | R2 | Rule | Check-in expiry when the student never checks out | Decision (2026-10-15): a check-in expires after 60 minutes; the table is then shown as free. 60 min is the upper end of the 30–60 min lunch break in the M2 proto-persona; not validated with users. Implemented in C2. Proposed by Esteve, approved by Adam on PR #5 (2026-10-15). | Implemented |
-| 7 | N1 | Feature | Automatic map refresh | A check-in shows in another browser within 10 s. Issue #29, PR #36 | In review |
-| 8 | S3 | Story | Mark myself "open to company" at my table | As a student eating alone, I want to show that I am open to company at my table, so that another student can join me without me approaching a stranger. Depends on S1. Order depends on P1 results. | Broad |
-| 9 | S4 | Story | Report a zone/table as "has space" or "full" | As a student in the cafeteria, I want to report whether a zone has space without sitting there, so that the map stays fresher. Needs a rule for conflicts with check-ins (M1 AI critique). | Broad |
+| 7 | N1 | Feature | Automatic map refresh | A check-in shows in another browser within 10 s. Issue #29, PR #36 | Implemented |
+| 8 | S3 | Story | Mark myself "open to company" at my table | As a student eating alone, I want to show that I am open to company at my table, so that another student can join me without me approaching a stranger. S3-AC1..3 in [M2](M2_story_slice.md) section 6 (proposed). Shown at the final demo only if P1 supports it. | Implemented (v1.0.0-rc1), criteria to agree |
+| 9 | N2 | Feature | One check-in at a time; "Your table" after a reload | Fixes #34, partly #32 (browser-side). [Security_review.md](Security_review.md) D-S1 | Implemented (v1.0.0-rc1) |
+| 10 | S4 | Story | Report a zone/table as "has space" or "full" | As a student in the cafeteria, I want to report whether a zone has space without sitting there, so that the map stays fresher. Needs a rule for conflicts with check-ins (M1 AI critique). | Broad |
 | — | X1 | Excluded (v1) | In-app chat / messaging | Excluded in M1: moderation and safety cost | Not planned |
 | — | X2 | Excluded (v1) | Abuse prevention for reports and statuses | Revisit if P1 shows real interest | Not planned |
 
-Known defects are listed in [Traceability](Traceability.md), section 3.
+Known defects are listed in [Traceability](Traceability.md), section 3. Technical debt: [Maintenance.md](Maintenance.md), section 2.
+
+S4 is not planned for the final release (Week 15): it needs a conflict rule with check-ins and adds abuse risk (X2).
 
 ## Definition of Done (draft)
 

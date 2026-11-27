@@ -153,3 +153,13 @@ Used. See AI_USAGE.md, entry 3 (2026-09-29).
 - **R1 is now atomic.** With a real database, two students can press "I'm sitting here" at the same moment. C4 offers `claim` (one `INSERT … ON CONFLICT … WHERE` statement) and `release` (one `DELETE … WHERE token`), so only one check-in can win. C2 still owns the rules: it passes the R2 limit (`activeSince`) to C4, and C4 only compares dates (decision D1 still holds: C1 and the API contract did not change).
 - **Deployment view:** two containers from `docker-compose.yml`, the Next.js app (standalone build, `Dockerfile`) and PostgreSQL 17 with a named volume. The database port is not published outside the Compose network.
 - **Checks:** contract tests in `lib/statusStore.test.ts` run on both stores, including 20 simultaneous claims on one table; `scripts/compose_smoke.sh` restarts the app container and checks that a check-in survives. Both run in CI (`.github/workflows/ci.yml`).
+
+---
+
+## 10. Update for Week 13: release candidate (2026-11-27)
+
+- **New operation for S3** in C2 (`setOpenToCompany`) and C4 (`setOpen`, one `UPDATE … WHERE token`), exposed as `POST /api/tables/{id}/company`. "Open to company" is one more field of a check-in, so it ends with the check-in without extra code. D1 still holds: C1 only displays `openToCompany` from the API.
+- **C2 hashes the check-in token** before passing it to C4 (`lib/token.ts`), so C4 never sees a usable token.
+- **Operations:** `GET /api/health` asks C4 to `ping()`; route handlers write JSON event logs (`lib/log.ts`). See [Maintenance.md](Maintenance.md).
+- **C1** keeps the student's own check-in in the browser and reads it with `useSyncExternalStore`, so a reload or another tab shows the same table.
+

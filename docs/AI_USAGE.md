@@ -213,3 +213,20 @@ Log of AI tool use in the ISE4133 project. AI output is not user research and is
 - **Checks run by the AI (2026-11-12):** tests 38/38 with a PostgreSQL container; `compose_smoke.sh` 5/5; lint, build and `tsc` OK (details in the evidence file).
 - **What the AI did not do:** No load test, no deployment to a public server, no backup of the database. The AI did not review or merge the pull request.
 - **Checks by the team:** pending (re-run `compose_smoke.sh` and `npm test` with `TEST_DATABASE_URL`, review on the pull request).
+
+---
+
+## Entry 15 — Week 13 release candidate: merges, defects, S3, observability, security, docs
+
+- **Date:** 2026-11-27
+- **Tool:** Claude Code (Anthropic)
+- **Milestone:** Week 13 (M5 release candidate), with Week 14 topics started
+- **Purpose:** Finish the technical work left for the final release, pushed directly to `main` at Esteve's request.
+- **Input given to the AI:** `course/assignment1_Final.pdf` (Week 13 assignment), `course/team_project_report.docx`, the syllabus, the midterm report (sections 2, 6, 7), BACKLOG.md, Traceability.md, open issues #24, #29–#35.
+- **Team decisions taken before the work:** Esteve asked to finish everything technical and push to `main` directly (no pull requests this time).
+- **Decisions proposed by the AI, to confirm by the team:** implementing S3 before P1, with the privacy rules of midterm section 6; acceptance criteria S3-AC1..3; browser-side limit for #32 and no rate limit (D-S1, D-S2); accepting #33 (D-S3); hashing tokens; the technical debt list.
+- **Output:** merge of PRs #36–#38 into `main`; Next.js 16.4.6; C1 "Your table" and one check-in at a time (#34, #32); S3 (C2, C4, route, UI, tests); `/api/health` and JSON logs; hashed tokens; security headers; `npm audit` in CI; UI tests for S1; `compose_smoke.sh` extended to 9 checks; docs: M2 section 6, API contract 2.4–2.5 and section 5, Architecture section 10, Traceability, BACKLOG, README, [Maintenance.md](Maintenance.md), [Security_review.md](Security_review.md), CHANGELOG, [RC check](evidence/2026-11-27_release_candidate_check.md).
+- **Checks run by the AI (2026-11-27):** tests 70/70 with PostgreSQL, coverage 92.04% lines; lint, `tsc`, build OK; `compose_smoke.sh` 9/9; main flow in Chrome on the Compose stack (4/4 steps); GitHub Actions run on `main`.
+- **What the AI did not do:** no user research (P1), no visit to the cafeteria (P2); no load test (the `npx autocannon` command was blocked by the session's permission check and not retried); no keyboard-only, phone or screen-reader test; no team report text.
+- **Checks by the team:** pending.
+

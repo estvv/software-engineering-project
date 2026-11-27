@@ -6,7 +6,9 @@ SeatTogether helps Inha students find a free cafeteria table during the lunch ru
 
 **Team:** Esteve BASCUNANA, Adam LARKEM
 
-**Status:** Midterm version tagged `midterm-v1`. Backend implemented and tested: `GET /api/tables` (S1), check-in / check-out with token (S2, R1, R2). Map UI (C1) with the S2 buttons implemented and checked in the browser. Since Week 12, check-ins are stored in PostgreSQL and the app ships as a Docker image, built and checked by CI on every pull request. The map refreshes every 5 seconds. The table layout is still a temporary placeholder.
+**Status:** Release candidate `v1.0.0-rc1` (Milestone 5, Week 13). Implemented and tested: map of free and occupied tables with automatic refresh (S1), check-in / check-out with a token (S2, rules R1 and R2), "Your table" kept after a reload, and the opt-in "open to company" status (S3). Check-ins are stored in PostgreSQL; the app ships as a Docker image built, checked and published by CI. **Not done yet:** the real cafeteria layout (P2, the map is a temporary 3 × 4 grid) and the test with real students (P1). See [CHANGELOG.md](CHANGELOG.md).
+
+**Main flow:** select a free table → "I'm sitting here" → optionally tick "Show that I'm open to company" → "I'm leaving" when done. Sample data: `data/layout.json` (tables T1–T12); see the [release candidate check](docs/evidence/2026-11-27_release_candidate_check.md) for a run with screenshots.
 
 ## Run
 
@@ -60,7 +62,8 @@ Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 | C1 Map UI | `app/page.tsx`, `app/page.module.css` |
 | C2 Seat Status Service | `lib/seatStatus.ts`, route handlers in `app/api/`, errors in `lib/apiErrors.ts` |
 | C3 Table Layout | `data/layout.json`, `lib/layout.ts` |
-| C4 Status Store | `lib/statusStore.ts` (PostgreSQL, or memory without `DATABASE_URL`) |
+| C4 Status Store | `lib/statusStore.ts` (PostgreSQL, or memory without `DATABASE_URL`); tokens hashed in `lib/token.ts` |
+| Operations | `app/api/health/route.ts`, `lib/log.ts` (JSON logs) |
 | Deployment | `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yml` |
 
 ## Documents
@@ -73,6 +76,9 @@ Code layout (components from [Architecture v1](docs/Architecture_v1.md)):
 | [Architecture_v1.md](docs/Architecture_v1.md) | M3 prep (Week 5) | Component structure, criterion paths, decision D1 |
 | [API_contract.md](docs/API_contract.md) | M3 / Week 6 | C1 → C2 interface: operations, JSON, errors, traceability |
 | [MIDTERM_PLAN.md](docs/MIDTERM_PLAN.md) | Midterm (Week 8) | Step-by-step plan, owners and decisions for the midterm report |
-| [Traceability.md](docs/Traceability.md) | Week 11 | Criteria to tests and evidence, test levels, defect triage |
+| [Traceability.md](docs/Traceability.md) | Week 11, updated Week 13 | Criteria to tests and evidence, test levels, defect triage |
+| [Maintenance.md](docs/Maintenance.md) | Week 13 (M5) | Observability, technical debt, runbook, release process |
+| [Security_review.md](docs/Security_review.md) | Week 14 | Threats and responses, privacy decisions, accessibility check, AI-log audit |
+| [CHANGELOG.md](CHANGELOG.md) | M5 | Changes per version |
 | [AI_USAGE.md](docs/AI_USAGE.md) | All | Log of AI tool use and team checks |
 | [Git_practice_log.md](docs/Git_practice_log.md) | Self-study | Personal Git and GitHub practice record (not assessed) |
