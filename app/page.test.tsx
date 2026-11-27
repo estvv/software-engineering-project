@@ -107,3 +107,67 @@ describe("C1 automatic map refresh", () => {
     expect(t1Label()).toContain("occupied");
   });
 });
+
+describe("C1 my check-in (#34, #32)", () => {
+  const MINE_KEY = "seattogether.myCheckin";
+  const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
+
+  beforeEach(() => {
+    fetchMock.mockReset();
+    vi.stubGlobal("fetch", fetchMock);
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
+
+  it("#34: after a reload, shows which table is mine and can free it", async () => {
+    localStorage.setItem(MINE_KEY, JSON.stringify({ tableId: "T1", token: "tok", expiresAt: inOneHour() }));
+    fetchMock.mockImplementation(async (_url, init) =>
+      init?.method === "POST" ? json({ table: {} }) : json(tables("occupied")),
+    );
+    render(<Home />);
+
+    expect(await screen.findByText(/Your table:/)).toBeTruthy();
+    expect(t1Label()).toContain("yours");
+
+    fireEvent.click(screen.getByRole("button", { name: "I'm leaving T1" }));
+    await screen.findByText("Table T1 is free again. Thank you!");
+    const [url, init] = fetchMock.mock.calls.find(([, i]) => i?.method === "POST")!;
+    expect(url).toBe("/api/tables/T1/checkout");
+    expect(JSON.parse(init!.body as string)).toEqual({ checkinToken: "tok" });
+    expect(localStorage.getItem(MINE_KEY)).toBeNull();
+  });
+
+  it("#34: forgets my check-in when the map shows my table free (expired or freed)", async () => {
+    localStorage.setItem(MINE_KEY, JSON.stringify({ tableId: "T1", token: "tok", expiresAt: inOneHour() }));
+    fetchMock.mockImplementation(async () => json(tables("free")));
+    render(<Home />);
+
+    await screen.findByRole("button", { name: /^T1/ });
+    await vi.waitFor(() => expect(localStorage.getItem(MINE_KEY)).toBeNull());
+    expect(screen.queryByText(/Your table:/)).toBeNull();
+  });
+
+  it("#32: blocks a second check-in while I hold one", async () => {
+    localStorage.setItem(MINE_KEY, JSON.stringify({ tableId: "T1", token: "tok", expiresAt: inOneHour() }));
+    fetchMock.mockImplementation(async () => json(tables("occupied")));
+    render(<Home />);
+    await screen.findByText(/Your table:/);
+
+    fireEvent.click(screen.getByRole("button", { name: /^T2/ }));
+
+    expect((screen.getByRole("button", { name: "I'm sitting here" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText(/already checked in at T1/)).toBeTruthy();
+  });
+
+  it("reads a check-in saved by the previous version (token map)", async () => {
+    localStorage.setItem("seattogether.checkinTokens", JSON.stringify({ T1: "old" }));
+    fetchMock.mockImplementation(async () => json(tables("occupied")));
+    render(<Home />);
+
+    expect(await screen.findByText(/Your table:/)).toBeTruthy();
+  });
+});

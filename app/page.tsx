@@ -3,16 +3,27 @@
 // C1 Map UI. It only displays what C2 returns through the API (decision D1):
 // statuses, "no free table" and error messages all come from the response.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { CheckInResponse, ErrorBody, TablesResponse } from "@/lib/types";
 import styles from "./page.module.css";
 
 const GENERIC_ERROR = "Something went wrong, please retry.";
-const TOKENS_KEY = "seattogether.checkinTokens";
+const MINE_KEY = "seattogether.myCheckin";
+const LEGACY_TOKENS_KEY = "seattogether.checkinTokens";
 // Other students' check-ins must appear within 10 s (report section 7), so we poll at half that.
 const REFRESH_MS = 5000;
 
 type Notice = { kind: "ok" | "error"; text: string };
+
+/**
+ * The student's own check-in, kept in this browser only (no account, see
+ * API_contract.md section 5). One check-in at a time (issue #32).
+ */
+interface MyCheckIn {
+  tableId: string;
+  token: string;
+  expiresAt: string | null; // null for a check-in saved by an older version
+}
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let res: Response;
@@ -26,45 +37,72 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-function readTokens(): Record<string, string> {
+// My check-in lives in localStorage; React reads it as an external store, so a
+// reload, or a change in another tab, shows the same table (#34).
+const mineListeners = new Set<() => void>();
+
+function subscribeMine(onChange: () => void) {
+  mineListeners.add(onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    mineListeners.delete(onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+/** Raw saved value (a string, so React can compare snapshots), or null. */
+function mineSnapshot(): string | null {
   try {
-    return JSON.parse(localStorage.getItem(TOKENS_KEY) ?? "{}");
+    const saved = localStorage.getItem(MINE_KEY);
+    if (saved) return saved;
+    // Older versions kept { tableId: token } under another key.
+    const legacy = JSON.parse(localStorage.getItem(LEGACY_TOKENS_KEY) ?? "{}") as Record<string, string>;
+    const [tableId, token] = Object.entries(legacy)[0] ?? [];
+    return tableId && token ? JSON.stringify({ tableId, token, expiresAt: null }) : null;
   } catch {
-    return {};
+    return null;
   }
 }
 
-function saveToken(tableId: string, token: string | null) {
-  const tokens = readTokens();
-  if (token) tokens[tableId] = token;
-  else delete tokens[tableId];
-  localStorage.setItem(TOKENS_KEY, JSON.stringify(tokens));
+function parseMine(raw: string | null): MyCheckIn | null {
+  try {
+    const mine = JSON.parse(raw ?? "null") as MyCheckIn | null;
+    return mine?.tableId && mine.token ? mine : null;
+  } catch {
+    return null;
+  }
 }
 
-async function checkIn(tableId: string): Promise<string> {
-  const res = await request<CheckInResponse>(`/api/tables/${tableId}/checkin`, { method: "POST" });
-  saveToken(tableId, res.checkinToken);
-  const until = new Date(res.expiresAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  return `You are checked in at ${tableId} until ${until}.`;
+function saveMine(mine: MyCheckIn | null) {
+  try {
+    localStorage.removeItem(LEGACY_TOKENS_KEY);
+    if (mine) localStorage.setItem(MINE_KEY, JSON.stringify(mine));
+    else localStorage.removeItem(MINE_KEY);
+  } catch {
+    // Storage blocked (private mode): the check-in works, it is only not remembered.
+  }
+  mineListeners.forEach((notify) => notify());
 }
 
-async function checkOut(tableId: string): Promise<string> {
-  // Without a stored token we still ask C2, so that it decides which error applies (403 or 409).
-  await request(`/api/tables/${tableId}/checkout`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ checkinToken: readTokens()[tableId] ?? "" }),
-  });
-  saveToken(tableId, null);
-  return `Table ${tableId} is free again. Thank you!`;
+const timeOf = (iso: string) =>
+  new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+/** True when my saved check-in no longer holds a table: expired (R2) or freed. */
+function isOver(mine: MyCheckIn, tables: TablesResponse): boolean {
+  if (mine.expiresAt !== null && new Date(mine.expiresAt).getTime() <= Date.now()) return true;
+  const table = tables.tables.find((t) => t.id === mine.tableId);
+  return !table || table.status === "free";
 }
 
 export default function Home() {
   const [data, setData] = useState<TablesResponse | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [pickedId, setPickedId] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [busy, setBusy] = useState(false);
   const [stale, setStale] = useState(false);
+  const mine = parseMine(useSyncExternalStore(subscribeMine, mineSnapshot, () => null));
+  // Until the student picks a table, their own table is selected.
+  const selectedId = pickedId ?? mine?.tableId ?? null;
   const lastLoad = useRef(0);
 
   // Only the most recent request may update the map: a slow poll must not
@@ -75,6 +113,8 @@ export default function Home() {
     if (load === lastLoad.current) {
       setData(tables);
       setStale(false);
+      const saved = parseMine(mineSnapshot());
+      if (saved && isOver(saved, tables)) saveMine(null);
     }
   }, []);
 
@@ -88,12 +128,30 @@ export default function Home() {
     return () => clearInterval(timer);
   }, [loadTables]);
 
-  async function run(action: (tableId: string) => Promise<string>) {
-    if (!selectedId) return;
+  async function checkIn(tableId: string): Promise<string> {
+    const res = await request<CheckInResponse>(`/api/tables/${tableId}/checkin`, { method: "POST" });
+    saveMine({ tableId, token: res.checkinToken, expiresAt: res.expiresAt });
+    return `You are checked in at ${tableId} until ${timeOf(res.expiresAt)}.`;
+  }
+
+  async function checkOut(tableId: string): Promise<string> {
+    // Without my token we still ask C2, so that it decides which error applies (403 or 409).
+    const isMine = mine?.tableId === tableId;
+    await request(`/api/tables/${tableId}/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ checkinToken: isMine ? mine.token : "" }),
+    });
+    if (isMine) saveMine(null);
+    return `Table ${tableId} is free again. Thank you!`;
+  }
+
+  async function run(action: (tableId: string) => Promise<string>, tableId: string | null) {
+    if (!tableId) return;
     setBusy(true);
     setNotice(null);
     try {
-      setNotice({ kind: "ok", text: await action(selectedId) });
+      setNotice({ kind: "ok", text: await action(tableId) });
     } catch (e) {
       setNotice({ kind: "error", text: (e as Error).message });
     }
@@ -106,11 +164,24 @@ export default function Home() {
   }
 
   const cols = data ? Math.max(...data.tables.map((t) => t.col)) + 1 : 1;
+  const alreadyCheckedIn = mine !== null && mine.tableId !== selectedId;
 
   return (
     <main className={styles.main}>
       <h1>SeatTogether</h1>
       <p className={styles.subtitle}>Inha student cafeteria (temporary layout)</p>
+
+      {mine && (
+        <section className={styles.mine} aria-label="My table">
+          <p>
+            Your table: <strong>{mine.tableId}</strong>
+            {mine.expiresAt && <> until {timeOf(mine.expiresAt)}</>}
+          </p>
+          <button type="button" disabled={busy} onClick={() => run(checkOut, mine.tableId)}>
+            I&apos;m leaving {mine.tableId}
+          </button>
+        </section>
+      )}
 
       {data?.noFreeTable && (
         <p className={styles.noFree} role="status">
@@ -135,10 +206,11 @@ export default function Home() {
               className={`${styles.table} ${styles[t.status]} ${t.id === selectedId ? styles.selected : ""}`}
               style={{ gridRow: t.row + 1, gridColumn: t.col + 1 }}
               aria-pressed={t.id === selectedId}
-              onClick={() => setSelectedId(t.id)}
+              onClick={() => setPickedId(t.id)}
             >
               <span className={styles.tableId}>{t.id}</span>
               <span>{t.status}</span>
+              {t.id === mine?.tableId && <span className={styles.yours}>yours</span>}
             </button>
           ))}
         </div>
@@ -146,12 +218,22 @@ export default function Home() {
 
       <div className={styles.actions}>
         <p>{selectedId ? `Selected table: ${selectedId}` : "Select a table on the map."}</p>
-        <button type="button" disabled={!selectedId || busy} onClick={() => run(checkIn)}>
+        <button
+          type="button"
+          disabled={!selectedId || busy || mine !== null}
+          aria-describedby={alreadyCheckedIn ? "one-table-hint" : undefined}
+          onClick={() => run(checkIn, selectedId)}
+        >
           I&apos;m sitting here
         </button>
-        <button type="button" disabled={!selectedId || busy} onClick={() => run(checkOut)}>
+        <button type="button" disabled={!selectedId || busy} onClick={() => run(checkOut, selectedId)}>
           I&apos;m leaving
         </button>
+        {alreadyCheckedIn && (
+          <p id="one-table-hint" className={styles.hint}>
+            You are already checked in at {mine.tableId}. Leave it first to change table.
+          </p>
+        )}
       </div>
 
       {notice && (

@@ -57,6 +57,46 @@
   border-color: currentColor;
 }
 
+.yours {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.mine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  border: 2px solid currentColor;
+  border-radius: 8px;
+}
+
+.mine button {
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Keyboard users must see where the focus is (Week 14, accessibility). */
+.table:focus-visible,
+.actions button:focus-visible,
+.mine button:focus-visible {
+  outline: 3px solid #1a5fd0;
+  outline-offset: 3px;
+}
+
+.hint {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
